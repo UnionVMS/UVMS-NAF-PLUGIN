@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jboss-web>
+    <server-instance>default-server</server-instance>      
+    <virtual-host>default-host</virtual-host>
+    <security-domain>client_cert_domain</security-domain>
+</jboss-web>
