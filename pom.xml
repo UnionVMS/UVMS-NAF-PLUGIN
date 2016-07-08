@@ -20,7 +20,7 @@
         <asset.version>2.0.7</asset.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <release.branch.name>uvms-2.0.6-kili</release.branch.name>
+        <release.branch.name>uvms-git-release</release.branch.name>
         <project.scm.id>github</project.scm.id>
         <maven-release-plugin>2.5.3</maven-release-plugin>
     </properties>
