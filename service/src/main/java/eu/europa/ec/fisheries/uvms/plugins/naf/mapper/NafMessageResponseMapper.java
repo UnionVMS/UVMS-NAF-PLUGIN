@@ -68,7 +68,7 @@ public class NafMessageResponseMapper {
                     movementType.setMovement(movement);
                     movementType.setPluginType(PluginType.NAF);
                     movementType.setPluginName(pluginName);
-                    movementType.setTimestamp(DateUtils.dateToXmlGregorian(new Date()));
+                    movementType.setTimestamp(new Date());
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new PluginException(e.getMessage());
@@ -170,7 +170,7 @@ public class NafMessageResponseMapper {
             timeString = "0" + timeString;
         }
         Date date = DateUtil.parseToUTCDateTime(dateString + " " + timeString);
-        movement.setPositionTime(DateUtils.dateToXmlGregorian(date));
+        movement.setPositionTime(date);
     }
 
     static void mapIRCS(String value, MovementBaseType movement) {

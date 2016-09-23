@@ -130,7 +130,7 @@ public class NafMessageResponseMapperTest {
         Date date = DateUtil.parseToUTCDateTime("20160208" + " " + "1558");
 
         NafMessageResponseMapper.mapDateTime(movement);
-        Assert.assertEquals(movement.getPositionTime(), DateUtils.dateToXmlGregorian(date));
+        Assert.assertEquals(movement.getPositionTime(), date);
 
         movement.setPositionTime(null);
         NafMessageResponseMapper.timeString = null;
