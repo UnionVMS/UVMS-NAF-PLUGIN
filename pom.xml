@@ -17,11 +17,11 @@
         <logback.core.version>1.1.2</logback.core.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
-        <release.branch.name>uvms-2.0.6-kili</release.branch.name>
+        <release.branch.name>uvms-2.1.0-jessamine-boffin</release.branch.name>
 
-        <asset.version>2.1.0-SNAPSHOT</asset.version>
-        <audit.model.version>2.1.0-SNAPSHOT</audit.model.version>
-        <exchange.model.version>2.1.0-SNAPSHOT</exchange.model.version>
+        <asset.version>2.1.0</asset.version>
+        <audit.model.version>2.1.0</audit.model.version>
+        <exchange.model.version>2.1.0</exchange.model.version>
         <date.classifier>date</date.classifier>
 
         <project.scm.id>github</project.scm.id>
