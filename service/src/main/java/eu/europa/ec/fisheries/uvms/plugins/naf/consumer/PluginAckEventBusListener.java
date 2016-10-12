@@ -33,21 +33,12 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.naf.service.PluginService;
 
-@MessageDriven(mappedName = ExchangeModelConstants.PLUGIN_EVENTBUS, activationConfig = {
-    @ActivationConfigProperty(propertyName = "messagingType", propertyValue = ExchangeModelConstants.CONNECTION_TYPE),
-    @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = "Durable"),
-    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = ExchangeModelConstants.DESTINATION_TYPE_TOPIC),
-    @ActivationConfigProperty(propertyName = "destination", propertyValue = ExchangeModelConstants.EVENTBUS_NAME)
-})
 public class PluginAckEventBusListener implements MessageListener {
 
     final static Logger LOG = LoggerFactory.getLogger(PluginAckEventBusListener.class);
 
     @EJB
     StartupBean startupService;
-
-    @EJB
-    PluginService nafService;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -65,7 +56,6 @@ public class PluginAckEventBusListener implements MessageListener {
                 PluginFault fault = JAXBMarshaller.unmarshallTextMessage(textMessage, PluginFault.class);
                 handlePluginFault(fault);
             } else {
-                String responseMessage = null;
                 switch (request.getMethod()) {
                     case REGISTER_SERVICE:
                         RegisterServiceResponse registerResponse = JAXBMarshaller.unmarshallTextMessage(textMessage, RegisterServiceResponse.class);
