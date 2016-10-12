@@ -14,6 +14,7 @@ package eu.europa.ec.fisheries.uvms.plugins.naf.util;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -23,7 +24,7 @@ public class DateUtil {
     private final static String DATE_TIME_FORMAT = "yyyyMMdd HHmm";
     private static Date parseToUTC(String format, String dateString) {
     	DateTimeFormatter formatter = DateTimeFormat.forPattern(format).withOffsetParsed();
-    	DateTime dateTime = formatter.withZoneUTC().parseDateTime(dateString);
+    	DateTime dateTime = formatter.withZone(DateTimeZone.UTC).parseDateTime(dateString);
     	GregorianCalendar cal = dateTime.toGregorianCalendar();
     	return cal.getTime();
     }
