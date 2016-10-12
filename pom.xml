@@ -21,7 +21,7 @@
 
         <asset.version>2.1.0</asset.version>
         <audit.model.version>2.1.0</audit.model.version>
-        <exchange.model.version>2.1.0</exchange.model.version>
+        <exchange.model.version>2.1.1-SNAPSHOT</exchange.model.version>
         <date.classifier>date</date.classifier>
 
         <project.scm.id>github</project.scm.id>

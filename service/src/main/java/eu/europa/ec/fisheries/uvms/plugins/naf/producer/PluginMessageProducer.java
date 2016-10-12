@@ -24,13 +24,13 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.constants.ModuleQueue;
 @Singleton
 public class PluginMessageProducer {
 
-    @Resource(mappedName = ExchangeModelConstants.EXCHANGE_MESSAGE_IN_QUEUE)
+    @Resource(mappedName = ExchangeModelConstants.NO_PREFIX_EXCHANGE_MESSAGE_IN_QUEUE)
     private Queue exchangeQueue;
 
-    @Resource(mappedName = ExchangeModelConstants.PLUGIN_EVENTBUS)
+    @Resource(mappedName = ExchangeModelConstants.NO_PREFIX_PLUGIN_EVENTBUS)
     private Topic eventBus;
 
-    @Resource(lookup = ExchangeModelConstants.CONNECTION_FACTORY)
+    @Resource(lookup = ExchangeModelConstants.NO_PREFIX_CONNECTION_FACTORY)
     private ConnectionFactory connectionFactory;
 
     private Connection connection = null;
