@@ -17,15 +17,18 @@
         <logback.core.version>1.1.2</logback.core.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <joda-time.version>2.9.1</joda-time.version>
         <release.branch.name>uvms-2.0.6-kili</release.branch.name>
 
         <asset.version>2.1.0</asset.version>
         <audit.model.version>2.1.0</audit.model.version>
-        <exchange.model.version>2.1.0</exchange.model.version>
+        <exchange.model.version>2.1.1-SNAPSHOT</exchange.model.version>
         <date.classifier>date</date.classifier>
 
         <project.scm.id>github</project.scm.id>
         <maven-release-plugin>2.5.3</maven-release-plugin>
+
+        <copy.ear.target>C:\dev\WebLogic\domain1213\servers\AdminServer\upload</copy.ear.target>
     </properties>
     
     <dependencies>

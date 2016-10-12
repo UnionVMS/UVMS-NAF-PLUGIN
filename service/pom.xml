@@ -19,7 +19,20 @@
         <application.version>${project.parent.version}</application.version>
         <application.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
         <application.error.logfile>/app/logs/${project.parent.artifactId}/${project.parent.artifactId}-error.log</application.error.logfile>
+
+        <application.connection.factory>jms:/ConnectionFactory</application.connection.factory>
+        <application.destination.jndi>jms:/jms/topic/EventBus</application.destination.jndi>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>weblogic</id>
+            <properties>
+                <application.connection.factory>ConnectionFactory</application.connection.factory>
+                <application.destination.jndi>jms/topic/EventBus</application.destination.jndi>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -34,6 +47,11 @@
             <artifactId>asset-model</artifactId>
             <version>${asset.version}</version>
             <classifier>${date.classifier}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
         </dependency>
     </dependencies>
     
