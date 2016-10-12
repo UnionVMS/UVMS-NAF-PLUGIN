@@ -27,6 +27,8 @@
 
         <project.scm.id>github</project.scm.id>
         <maven-release-plugin>2.5.3</maven-release-plugin>
+
+        <copy.ear.target>C:\dev\WebLogic\domain1213\servers\AdminServer\upload</copy.ear.target>
     </properties>
     
     <dependencies>

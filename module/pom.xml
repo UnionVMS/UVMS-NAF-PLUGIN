@@ -100,7 +100,7 @@
                                            <type>${project.packaging}</type>
                                        </artifactItem>
                                    </artifactItems>
-                                   <outputDirectory>C:\dev\WebLogic\domain1213\servers\AdminServer\upload</outputDirectory>
+                                   <outputDirectory>${copy.ear.target}</outputDirectory>
                                </configuration>
                            </execution>
                        </executions>
