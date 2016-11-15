@@ -35,7 +35,7 @@ public class DateUtil {
 
     }
     
-    public static Date parseToUTCDateTime(String dateString) throws ParseException {
+    public static Date parseToUTCDateTime(String dateString) {
         return parseToUTC(DATE_TIME_FORMAT, dateString);
     }
 }
