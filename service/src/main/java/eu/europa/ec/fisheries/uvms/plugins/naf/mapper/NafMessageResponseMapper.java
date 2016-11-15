@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
+import java.text.ParseException;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +170,8 @@ public class NafMessageResponseMapper {
         while (timeString.length() < 4) {
             timeString = "0" + timeString;
         }
-        Date date = DateUtil.parseToUTCDateTime(dateString + " " + timeString);
+        Date date = DateUtil.parseToUTCDateTime(dateString + " " + timeString + " UTC");
+        LOG.info("Position time: {}", date);
         movement.setPositionTime(date);
     }
 

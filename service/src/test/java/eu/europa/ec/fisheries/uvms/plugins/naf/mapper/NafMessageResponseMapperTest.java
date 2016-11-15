@@ -23,6 +23,8 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCodes;
 import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
 import static eu.europa.ec.fisheries.uvms.plugins.naf.mapper.NafMessageResponseMapper.dateString;
 import eu.europa.ec.fisheries.uvms.plugins.naf.util.DateUtil;
+
+import java.text.ParseException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -127,7 +129,7 @@ public class NafMessageResponseMapperTest {
         NafMessageResponseMapper.dateString = "20160208";
         NafMessageResponseMapper.timeString = "1558";
         MovementBaseType movement = new MovementBaseType();
-        Date date = DateUtil.parseToUTCDateTime("20160208" + " " + "1558");
+        Date date = DateUtil.parseToUTCDateTime("20160208" + " " + "1558 UTC");
 
         NafMessageResponseMapper.mapDateTime(movement);
         Assert.assertEquals(movement.getPositionTime(), date);
