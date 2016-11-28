@@ -28,10 +28,10 @@ public class DateUtil {
     final static Logger LOG = LoggerFactory.getLogger(DateUtil.class);
     private final static String DATE_TIME_FORMAT = "yyyyMMdd HHmm z";
     private static Date parseToUTC(String format, String dateString) {
-    	DateTimeFormatter formatter = DateTimeFormat.forPattern(format).withOffsetParsed();
-    	DateTime dateTime = formatter.withZone(DateTimeZone.UTC).parseDateTime(dateString);
-    	GregorianCalendar cal = dateTime.toGregorianCalendar();
-    	return cal.getTime();
+    	DateTimeFormatter formatter = DateTimeFormat.forPattern(format);
+    	DateTime dateTime = formatter.withZoneUTC().parseDateTime(dateString);
+    	LOG.info("JodaTime: {}", dateTime);
+    	return dateTime.toLocalDateTime().toDate();
 
     }
     

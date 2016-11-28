@@ -171,7 +171,7 @@ public class NafMessageResponseMapper {
             timeString = "0" + timeString;
         }
         Date date = DateUtil.parseToUTCDateTime(dateString + " " + timeString + " UTC");
-        LOG.info("Position time: {}", date);
+        LOG.info("Time String: {}; Converted date: {}", dateString + " " + timeString + " UTC", date);
         movement.setPositionTime(date);
     }
 
