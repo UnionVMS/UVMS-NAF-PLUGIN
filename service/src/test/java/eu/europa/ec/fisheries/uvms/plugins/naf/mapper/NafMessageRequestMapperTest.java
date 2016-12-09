@@ -40,7 +40,7 @@ public class NafMessageRequestMapperTest {
         
         Date date = new Date();
         XMLGregorianCalendar greg = DateUtils.dateToXmlGregorian(date);
-        movement.setPositionTime(greg);
+        movement.setPositionTime(date);
         
         movement.setExternalMarking("EXT");
         movement.setFlagState("SWE");
@@ -99,9 +99,9 @@ public class NafMessageRequestMapperTest {
     public void getTimeStringTest() {
         MovementType movement = new MovementType();
         Date date = new Date();
+        movement.setPositionTime(date);
+
         XMLGregorianCalendar greg = DateUtils.dateToXmlGregorian(date);
-        movement.setPositionTime(greg);
-        
         String time = NafMessageRequestMapper.getTimeString(movement);
         String hour = (greg.getHour() < 10) ? "0" + greg.getHour() : "" + greg.getHour();
         String min = (greg.getMinute()< 10) ? "0" + greg.getMinute(): "" + greg.getMinute();
@@ -114,7 +114,7 @@ public class NafMessageRequestMapperTest {
         MovementType movement = new MovementType();
         Date date = new Date();
         XMLGregorianCalendar greg = DateUtils.dateToXmlGregorian(date);
-        movement.setPositionTime(greg);
+        movement.setPositionTime(date);
         
         String dateString = NafMessageRequestMapper.getDateString(movement);
         String month = (greg.getMonth() < 10) ? "0" + greg.getMonth() : "" + greg.getMonth();

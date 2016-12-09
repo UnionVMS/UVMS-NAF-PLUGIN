@@ -18,6 +18,9 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCodes;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 /**
  **/
 public class NafMessageRequestMapper {
@@ -92,12 +95,14 @@ public class NafMessageRequestMapper {
 
     static String getTimeString(MovementType movement) {
         StringBuilder time = new StringBuilder();
-        int hour = movement.getPositionTime().getHour();
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(movement.getPositionTime());
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
         if (hour < 10) {
             time.append(0);
         }
         time.append(hour);
-        int min = movement.getPositionTime().getMinute();
+        int min = calendar.get(Calendar.MINUTE);
         if (min < 10) {
             time.append("0");
         }
@@ -107,13 +112,15 @@ public class NafMessageRequestMapper {
 
     static String getDateString(MovementType movement) {
         StringBuilder date = new StringBuilder();
-        date.append(movement.getPositionTime().getYear());
-        int month = movement.getPositionTime().getMonth();
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(movement.getPositionTime());
+        date.append(calendar.get(Calendar.YEAR));
+        int month = calendar.get(Calendar.MONTH) + 1;
         if (month < 10) {
             date.append("0");
         }
         date.append(month);
-        int day = movement.getPositionTime().getDay();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
         if (day < 10) {
             date.append("0");
         }
