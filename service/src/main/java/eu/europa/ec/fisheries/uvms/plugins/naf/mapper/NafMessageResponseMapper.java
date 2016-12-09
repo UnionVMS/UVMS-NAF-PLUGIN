@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
+import java.text.ParseException;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ public class NafMessageResponseMapper {
                     movementType.setMovement(movement);
                     movementType.setPluginType(PluginType.NAF);
                     movementType.setPluginName(pluginName);
-                    movementType.setTimestamp(DateUtils.dateToXmlGregorian(new Date()));
+                    movementType.setTimestamp(new Date());
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new PluginException(e.getMessage());
@@ -169,8 +170,9 @@ public class NafMessageResponseMapper {
         while (timeString.length() < 4) {
             timeString = "0" + timeString;
         }
-        Date date = DateUtil.parseToUTCDateTime(dateString + " " + timeString);
-        movement.setPositionTime(DateUtils.dateToXmlGregorian(date));
+        Date date = DateUtil.parseToUTCDateTime(dateString + " " + timeString + " UTC");
+        LOG.info("Time String: {}; Converted date: {}", dateString + " " + timeString + " UTC", date);
+        movement.setPositionTime(date);
     }
 
     static void mapIRCS(String value, MovementBaseType movement) {
