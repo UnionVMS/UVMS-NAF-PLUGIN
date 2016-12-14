@@ -20,6 +20,7 @@ import javax.jms.*;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import eu.europa.ec.fisheries.uvms.message.JMSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,28 +37,36 @@ public class PluginMessageProducer {
 
     @PostConstruct
     public void resourceLookup() {
+        LOG.debug("Open connection to JMS broker");
+        InitialContext ctx;
         try {
-            InitialContext ctx = new InitialContext();
-            exchangeQueue = (Queue) ctx.lookup(ExchangeModelConstants.NO_PREFIX_EXCHANGE_MESSAGE_IN_QUEUE);
-            if (exchangeQueue == null) {
-                resourceLookupPrefix();
+            ctx = new InitialContext();
+        } catch (Exception e) {
+            LOG.error("Failed to get InitialContext",e);
+            throw new RuntimeException(e);
+        }
+        try {
+            connectionFactory = (QueueConnectionFactory) ctx.lookup(ExchangeModelConstants.CONNECTION_FACTORY);
+        } catch (NamingException ne) {
+            //if we did not find the connection factory we might need to add java:/ at the start
+            LOG.debug("Connection Factory lookup failed for " + ExchangeModelConstants.CONNECTION_FACTORY);
+            String wfName = "java:/" + ExchangeModelConstants.CONNECTION_FACTORY;
+            try {
+                LOG.debug("trying " + wfName);
+                connectionFactory = (QueueConnectionFactory) ctx.lookup(wfName);
+            } catch (Exception e) {
+                LOG.error("Connection Factory lookup failed for both " + ExchangeModelConstants.CONNECTION_FACTORY  + " and " + wfName);
+                throw new RuntimeException(e);
             }
-            eventBus = (Topic) ctx.lookup(ExchangeModelConstants.NO_PREFIX_PLUGIN_EVENTBUS);
-            connectionFactory = (ConnectionFactory) ctx.lookup(ExchangeModelConstants.NO_PREFIX_CONNECTION_FACTORY);
-        } catch (NamingException e) {
-            resourceLookupPrefix();
         }
-    }
-
-    private void resourceLookupPrefix() {
         try {
-            InitialContext ctx = new InitialContext();
-            exchangeQueue = (Queue) ctx.lookup(ExchangeModelConstants.EXCHANGE_MESSAGE_IN_QUEUE);
-            eventBus = (Topic) ctx.lookup(ExchangeModelConstants.PLUGIN_EVENTBUS);
-            connectionFactory = (ConnectionFactory) ctx.lookup(ExchangeModelConstants.CONNECTION_FACTORY);
-        } catch (NamingException e) {
-            LOG.error("Could not lookup resources");
+            connection = connectionFactory.createConnection();
+            connection.start();
+        } catch (JMSException ex) {
+            LOG.error("Error when open connection to JMS broker");
         }
+        exchangeQueue = JMSUtils.lookupQueue(ctx, ExchangeModelConstants.EXCHANGE_MESSAGE_IN_QUEUE);
+        eventBus = JMSUtils.lookupTopic(ctx, ExchangeModelConstants.PLUGIN_EVENTBUS);
     }
 
     final static Logger LOG = LoggerFactory.getLogger(PluginMessageProducer.class);
