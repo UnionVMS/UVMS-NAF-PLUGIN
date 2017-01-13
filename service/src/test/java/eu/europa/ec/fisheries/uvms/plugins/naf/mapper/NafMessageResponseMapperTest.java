@@ -170,6 +170,18 @@ public class NafMessageResponseMapperTest {
     }
 
     @Test
+    public void mapCFRTest() {
+        MovementBaseType movement = new MovementBaseType();
+        NafMessageResponseMapper.mapCFR("SWE000008121", movement);
+
+        Assert.assertNotNull(movement.getAssetId());
+        Assert.assertNotNull(movement.getAssetId().getAssetIdList());
+        Assert.assertEquals(1, movement.getAssetId().getAssetIdList().size());
+        Assert.assertEquals("SWE000008121", movement.getAssetId().getAssetIdList().get(0).getValue());
+        Assert.assertEquals(AssetIdType.CFR, movement.getAssetId().getAssetIdList().get(0).getIdType());
+    }
+
+    @Test
     public void getMovementPointTest() {
         MovementPoint point = NafMessageResponseMapper.getMovementPoint(new MovementBaseType());
         Assert.assertNotNull(point);
