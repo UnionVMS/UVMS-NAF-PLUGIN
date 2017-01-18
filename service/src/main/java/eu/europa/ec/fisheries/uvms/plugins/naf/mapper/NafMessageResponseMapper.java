@@ -33,6 +33,8 @@ import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,6 +104,7 @@ public class NafMessageResponseMapper {
                     movement.setAssetName(value);
                     break;
                 case NafCodes.INTERNAL_REFERENCE_NUMBER:
+                    movement.setInternalReferenceNumber(value);
                     mapCFR(value, movement);
                     break;
                 case NafCodes.EXTERNAL_MARK:
@@ -186,13 +189,10 @@ public class NafMessageResponseMapper {
     }
 
     static void mapCFR(String value, MovementBaseType movement) {
-        AssetId assetId = new AssetId();
         AssetIdList cfr = new AssetIdList();
         cfr.setIdType(AssetIdType.CFR);
         cfr.setValue(value);
-        assetId.getAssetIdList().add(cfr);
-        movement.setAssetId(assetId);
-        movement.setInternalReferenceNumber(value);
+        movement.getAssetId().getAssetIdList().add(cfr);
     }
 
     static MovementPoint getMovementPoint(MovementBaseType movement) {
