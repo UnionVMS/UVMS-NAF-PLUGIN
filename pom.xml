@@ -18,7 +18,7 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <joda-time.version>2.9.1</joda-time.version>
-        <release.branch.name>uvms-3.0.1-C3PO</release.branch.name>
+        <release.branch.name>uvms-3.0.3-C3PO</release.branch.name>
 
         <uvms.common.version>2.0.14</uvms.common.version>
         <asset.version>3.0.0</asset.version>
