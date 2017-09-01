@@ -22,7 +22,7 @@
         <uvms.common.version>2.0.27</uvms.common.version>
         <asset.version>3.0.6</asset.version>
         <audit.model.version>3.0.0</audit.model.version>
-        <exchange.model.version>3.0.7-SNAPSHOT</exchange.model.version>
+        <exchange.model.version>3.0.7</exchange.model.version>
         <date.classifier>date</date.classifier>
 
         <project.scm.id>github</project.scm.id>
