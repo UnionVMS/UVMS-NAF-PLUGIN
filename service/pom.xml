@@ -39,14 +39,12 @@
             <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
-            <classifier>${date.classifier}</classifier>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
             <artifactId>asset-model</artifactId>
             <version>${asset.version}</version>
-            <classifier>${date.classifier}</classifier>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -87,7 +85,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
+                <version>1.0.0</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
