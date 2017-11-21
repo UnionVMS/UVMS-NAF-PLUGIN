@@ -51,23 +51,9 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms</groupId>
-            <artifactId>uvms-commons</artifactId>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-message</artifactId>
             <version>${uvms.common.version}</version>
-            <exclusions>
-            	<exclusion>
-            		<groupId>org.geotools</groupId>
-            		<artifactId>gt-geojson</artifactId>
-            	</exclusion>
-            	<exclusion>
-            	    <groupId>com.vividsolutions</groupId>
-    				<artifactId>jts</artifactId>            	
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.jboss.resteasy</groupId>
-            		<artifactId>resteasy-multipart-provider</artifactId>
-            	</exclusion>
-            </exclusions>                        
         </dependency>
     </dependencies>
     
