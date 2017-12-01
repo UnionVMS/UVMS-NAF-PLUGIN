@@ -104,7 +104,6 @@ public class NafMessageResponseMapper {
                     movement.setAssetName(value);
                     break;
                 case NafCodes.INTERNAL_REFERENCE_NUMBER:
-                    movement.setInternalReferenceNumber(value);
                     mapCFR(value, movement);
                     break;
                 case NafCodes.EXTERNAL_MARK:
@@ -179,20 +178,27 @@ public class NafMessageResponseMapper {
     }
 
     static void mapIRCS(String value, MovementBaseType movement) {
-        AssetId assetId = new AssetId();
+    	if (movement.getAssetId() == null) {
+    		AssetId assetId = new AssetId();
+    		movement.setAssetId(assetId);
+    	}
         AssetIdList ircs = new AssetIdList();
         ircs.setIdType(AssetIdType.IRCS);
         ircs.setValue(value);
-        assetId.getAssetIdList().add(ircs);
-        movement.setAssetId(assetId);
+        movement.getAssetId().getAssetIdList().add(ircs);
         movement.setIrcs(value);
     }
 
     static void mapCFR(String value, MovementBaseType movement) {
+    	if (movement.getAssetId() == null) {
+    		AssetId assetId = new AssetId();
+    		movement.setAssetId(assetId);
+    	}
         AssetIdList cfr = new AssetIdList();
         cfr.setIdType(AssetIdType.CFR);
         cfr.setValue(value);
         movement.getAssetId().getAssetIdList().add(cfr);
+        movement.setInternalReferenceNumber(value);
     }
 
     static MovementPoint getMovementPoint(MovementBaseType movement) {
