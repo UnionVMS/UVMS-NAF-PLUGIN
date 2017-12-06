@@ -17,7 +17,6 @@ import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +39,8 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.util.DateUtil;
 /**
  **/
 public class NafMessageResponseMapper {
+	
+	private NafMessageResponseMapper() {}
     
     private static final Logger LOG = LoggerFactory.getLogger(NafMessageResponseMapper.class);
     
@@ -154,7 +155,7 @@ public class NafMessageResponseMapper {
     }
 
     static void mapSpeed(MovementBaseType movement, String value) throws NumberFormatException {
-        BigDecimal bd = new BigDecimal(Double.valueOf(value) / 10).setScale(4, RoundingMode.HALF_EVEN);
+        BigDecimal bd = BigDecimal.valueOf(Double.valueOf(value) / 10).setScale(4, RoundingMode.HALF_EVEN);
         double speed = bd.doubleValue();
         movement.setReportedSpeed(speed);
     }
@@ -236,7 +237,7 @@ public class NafMessageResponseMapper {
         double deg = (charToDouble(value.charAt(1)) * 10) + charToDouble(value.charAt(2));
         double min = (charToDouble(value.charAt(3)) * 10) + charToDouble(value.charAt(4));
         double decimalDegrees = deg + (min / 60);
-        BigDecimal bd = new BigDecimal(decimalDegrees).setScale(4, RoundingMode.HALF_EVEN);
+        BigDecimal bd = BigDecimal.valueOf(decimalDegrees).setScale(4, RoundingMode.HALF_EVEN);
         decimalDegrees = bd.doubleValue();
         return Double.valueOf(decimalDegrees);
     }
