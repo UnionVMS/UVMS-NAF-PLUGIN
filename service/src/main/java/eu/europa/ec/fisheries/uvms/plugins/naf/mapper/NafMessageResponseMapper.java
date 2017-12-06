@@ -87,7 +87,7 @@ public class NafMessageResponseMapper {
     	
     }
 
-	static void mapEntry(NafCode code, String value, MovementBaseType movement) throws NumberFormatException {
+	static void mapEntry(NafCode code, String value, MovementBaseType movement) {
 		switch (code) {
 		case RADIO_CALL_SIGN:
 			mapIRCS(value, movement);
@@ -154,7 +154,7 @@ public class NafMessageResponseMapper {
         movement.setActivity(activity);
     }
 
-    static void mapSpeed(MovementBaseType movement, String value) throws NumberFormatException {
+    static void mapSpeed(MovementBaseType movement, String value) {
         BigDecimal bd = BigDecimal.valueOf(Double.valueOf(value) / 10).setScale(4, RoundingMode.HALF_EVEN);
         double speed = bd.doubleValue();
         movement.setReportedSpeed(speed);
@@ -205,7 +205,7 @@ public class NafMessageResponseMapper {
         return pos;
     }
 
-    static void mapLongitude(MovementBaseType movement, String value, NafCode key) throws NumberFormatException {
+    static void mapLongitude(MovementBaseType movement, String value, NafCode key) {
         MovementPoint pos = getMovementPoint(movement);
         if (NafCode.LONGITUDE_DECIMAL.equals(key)) {
             pos.setLongitude(Double.valueOf(value));
@@ -219,7 +219,7 @@ public class NafMessageResponseMapper {
         movement.setPosition(pos);
     }
 
-    static void mapLatitude(MovementBaseType movement, String value, NafCode key) throws NumberFormatException {
+    static void mapLatitude(MovementBaseType movement, String value, NafCode key) {
         MovementPoint pos = getMovementPoint(movement);
         if (NafCode.LATITUDE_DECIMAL.equals(key)) {
             pos.setLatitude(Double.valueOf(value));
@@ -243,7 +243,7 @@ public class NafMessageResponseMapper {
     }
     
     static double charToDouble(char val) {
-        String str = "" + val;
+        String str = Character.toString(val);
         return Double.valueOf(str);
     }
 }

@@ -11,6 +11,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.mapper;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityListType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityType;
@@ -18,18 +26,14 @@ import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityTypeType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingType;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  **/
 public class ServiceMapper {
+	
+	private ServiceMapper() {}
 
-    final static Logger LOG = LoggerFactory.getLogger(ServiceMapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ServiceMapper.class);
 
     public static ServiceType getServiceType(String serviceClassName, String nafDisplayName, String description, PluginType nafType, String responseMessageName) {
 
@@ -50,7 +54,7 @@ public class ServiceMapper {
         return serviceType;
     }
 
-    public static SettingListType getSettingsListTypeFromMap(ConcurrentHashMap<String, String> settings) {
+    public static SettingListType getSettingsListTypeFromMap(ConcurrentMap<String, String> settings) {
         SettingListType settingListType = new SettingListType();
         Iterator<Map.Entry<String, String>> itr = settings.entrySet().iterator();
         while (itr.hasNext()) {
@@ -63,7 +67,7 @@ public class ServiceMapper {
         return settingListType;
     }
 
-    public static CapabilityListType getCapabilitiesListTypeFromMap(ConcurrentHashMap<String, String> capabilities) {
+    public static CapabilityListType getCapabilitiesListTypeFromMap(ConcurrentMap<String, String> capabilities) {
         CapabilityListType capabilityListType = new CapabilityListType();
         Iterator<Map.Entry<String, String>> itr = capabilities.entrySet().iterator();
         while (itr.hasNext()) {
@@ -82,7 +86,7 @@ public class ServiceMapper {
         return capabilityListType;
     }
 
-    public static void mapToMapFromProperties(ConcurrentHashMap<String, String> map, Properties props, String registerClassName) {
+    public static void mapToMapFromProperties(ConcurrentMap<String, String> map, Properties props, String registerClassName) {
         for (Object col : props.keySet()) {
             if (col.getClass().isAssignableFrom(String.class)) {
                 String keyString = (String) col;

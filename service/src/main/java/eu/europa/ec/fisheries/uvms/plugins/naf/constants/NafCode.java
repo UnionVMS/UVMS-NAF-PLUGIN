@@ -46,15 +46,14 @@ public enum NafCode {
 
 	private NafCode(String code) {
 		this.code = code;
-		this.pattern = compilePattern();
+		this.pattern = Pattern.compile(getPattern());
 	}
 
-	private Pattern compilePattern() {
+	private String getPattern() {
 		// '//CODE/([^/]+)//'
-		String regexp = DELIMITER + code + SUBDELIMITER + "([^" + SUBDELIMITER + "]+)" + DELIMITER;
-		return Pattern.compile(regexp);
+		return DELIMITER + code + SUBDELIMITER + "([^" + SUBDELIMITER + "]+)" + DELIMITER;
 	}
-
+	
 	public String getCode() {
 		return code;
 	}

@@ -24,6 +24,8 @@ import java.util.GregorianCalendar;
 /**
  **/
 public class NafMessageRequestMapper {
+	
+	private NafMessageRequestMapper() {}
     
     public static String mapToVMSMessage(ReportType report) {
         MovementType movement = report.getMovement();
@@ -146,15 +148,16 @@ public class NafMessageRequestMapper {
     static String getLatitudeString(Double coord) {
         StringBuilder sb = new StringBuilder();
         
-        if (coord < 0) {
-            coord = -coord;
+        Double latitude = coord;
+        if (latitude < 0) {
+        	latitude = -latitude;
             sb.append("S");
         } else {
             sb.append("N");
         }
         
-        int deg = (int) Math.floor(coord);
-        int min = (int)((coord - deg) * 60);
+        int deg = (int) Math.floor(latitude);
+        int min = (int)((latitude - deg) * 60);
         
         sb.append(deg);
         sb.append(min);
@@ -164,15 +167,16 @@ public class NafMessageRequestMapper {
     static String getLongitudeString(Double coord) {
         StringBuilder sb = new StringBuilder();
         
-        if (coord < 0) {
-            coord = -coord;
+        Double longitude = coord;
+        if (longitude < 0) {
+        	longitude = -longitude;
             sb.append("W");
         } else {
             sb.append("E");
         }
         
-        int deg = (int) Math.floor(coord);
-        int min = (int)((coord - deg) * 60);
+        int deg = (int) Math.floor(longitude);
+        int min = (int)((longitude - deg) * 60);
         
         sb.append(deg);
         sb.append(min);

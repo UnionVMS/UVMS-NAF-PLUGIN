@@ -11,17 +11,19 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf;
 
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 
 /**
  **/
 public abstract class PluginDataHolder {
 
-    public final static String PLUGIN_PROPERTIES = "naf.properties";
-    public final static String PROPERTIES = "settings.properties";
-    public final static String CAPABILITIES = "capabilities.properties";
+    public static final String PLUGIN_PROPERTIES = "naf.properties";
+    public static final String PROPERTIES = "settings.properties";
+    public static final String CAPABILITIES = "capabilities.properties";
 
     private Properties nafApplicaitonProperties;
     private Properties nafProperties;
@@ -31,15 +33,15 @@ public abstract class PluginDataHolder {
     private final ConcurrentHashMap<String, String> capabilities = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SetReportMovementType> cachedMovement = new ConcurrentHashMap<>();
 
-    public ConcurrentHashMap<String, String> getSettings() {
+    public ConcurrentMap<String, String> getSettings() {
         return settings;
     }
 
-    public ConcurrentHashMap<String, String> getCapabilities() {
+    public ConcurrentMap<String, String> getCapabilities() {
         return capabilities;
     }
 
-    public ConcurrentHashMap<String, SetReportMovementType> getCachedMovement() {
+    public ConcurrentMap<String, SetReportMovementType> getCachedMovement() {
         return cachedMovement;
     }
 
