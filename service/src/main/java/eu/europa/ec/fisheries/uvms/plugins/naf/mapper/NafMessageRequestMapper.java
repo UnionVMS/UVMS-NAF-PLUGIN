@@ -16,7 +16,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
-import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCodes;
+import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -32,26 +32,26 @@ public class NafMessageRequestMapper {
         appendStartRecord(naf);
         
         // Actual data
-        append(naf, NafCodes.TO, report.getRecipient());
-        append(naf, NafCodes.TYPE_OF_MESSAGE, movement.getMovementType().name());
-        if (!appendAsset(naf, NafCodes.RADIO_CALL_SIGN, AssetIdType.IRCS, movement)) {
-            append(naf, NafCodes.RADIO_CALL_SIGN, movement.getIrcs());
+        append(naf, NafCode.TO.getCode(), report.getRecipient());
+        append(naf, NafCode.TYPE_OF_MESSAGE.getCode(), movement.getMovementType().name());
+        if (!appendAsset(naf, NafCode.RADIO_CALL_SIGN.getCode(), AssetIdType.IRCS, movement)) {
+            append(naf, NafCode.RADIO_CALL_SIGN.getCode(), movement.getIrcs());
         }
-        append(naf, NafCodes.TRIP_NUMBER, movement.getTripNumber());
-        append(naf, NafCodes.VESSEL_NAME, movement.getAssetName());
-        append(naf, NafCodes.INTERNAL_REFERENCE_NUMBER, movement.getInternalReferenceNumber());
-        append(naf, NafCodes.EXTERNAL_MARK, movement.getExternalMarking());
+        append(naf, NafCode.TRIP_NUMBER.getCode(), movement.getTripNumber());
+        append(naf, NafCode.VESSEL_NAME.getCode(), movement.getAssetName());
+        append(naf, NafCode.INTERNAL_REFERENCE_NUMBER.getCode(), movement.getInternalReferenceNumber());
+        append(naf, NafCode.EXTERNAL_MARK.getCode(), movement.getExternalMarking());
         appendPosition(naf, movement);
         if (movement.getReportedSpeed() != null) {
-            append(naf, NafCodes.SPEED, (int) (movement.getReportedSpeed() * 10));
+            append(naf, NafCode.SPEED.getCode(), (int) (movement.getReportedSpeed() * 10));
         }
         if (movement.getReportedCourse() != null) {
-            append(naf, NafCodes.COURSE, movement.getReportedCourse().intValue());
+            append(naf, NafCode.COURSE.getCode(), movement.getReportedCourse().intValue());
         }
-        append(naf, NafCodes.DATE, getDateString(movement));
-        append(naf, NafCodes.TIME, getTimeString(movement));
+        append(naf, NafCode.DATE.getCode(), getDateString(movement));
+        append(naf, NafCode.TIME.getCode(), getTimeString(movement));
         if (movement.getActivity() != null && movement.getActivity().getMessageType() != null) {
-            append(naf, NafCodes.ACTIVITY, movement.getActivity().getMessageType().value());
+            append(naf, NafCode.ACTIVITY.getCode(), movement.getActivity().getMessageType().value());
         }
         
         appendEndRecord(naf);
@@ -60,23 +60,23 @@ public class NafMessageRequestMapper {
     }
 
     static void appendEndRecord(StringBuilder naf) {
-        naf.append(NafCodes.END_RECORD);
-        naf.append(NafCodes.DELIMITER);
+        naf.append(NafCode.END_RECORD.getCode());
+        naf.append(NafCode.DELIMITER);
     }
 
     static void appendStartRecord(StringBuilder naf) {
-        naf.append(NafCodes.DELIMITER);
-        naf.append(NafCodes.START_RECORD);
-        naf.append(NafCodes.DELIMITER);
+        naf.append(NafCode.DELIMITER);
+        naf.append(NafCode.START_RECORD.getCode());
+        naf.append(NafCode.DELIMITER);
     }
 
     static void appendPosition(StringBuilder naf, MovementType movement) {
         if (MovementSourceType.MANUAL.equals(movement.getSource())) {
-            append(naf, NafCodes.LATITUDE, getLatitudeString(movement.getPosition().getLatitude()));
-            append(naf, NafCodes.LONGITUDE, getLongitudeString(movement.getPosition().getLongitude()));
+            append(naf, NafCode.LATITUDE.getCode(), getLatitudeString(movement.getPosition().getLatitude()));
+            append(naf, NafCode.LONGITUDE.getCode(), getLongitudeString(movement.getPosition().getLongitude()));
         } else {
-            append(naf, NafCodes.LATITUDE_DECIMAL, movement.getPosition().getLatitude());
-            append(naf, NafCodes.LONGITUDE_DECIMAL, movement.getPosition().getLongitude());
+            append(naf, NafCode.LATITUDE_DECIMAL.getCode(), movement.getPosition().getLatitude());
+            append(naf, NafCode.LONGITUDE_DECIMAL.getCode(), movement.getPosition().getLongitude());
         }
     }
 
@@ -138,9 +138,9 @@ public class NafMessageRequestMapper {
     
     static void append(StringBuilder naf, String key, String value) {
         naf.append(key);
-        naf.append(NafCodes.SUBDELIMITER);
+        naf.append(NafCode.SUBDELIMITER);
         naf.append(value);
-        naf.append(NafCodes.DELIMITER);
+        naf.append(NafCode.DELIMITER);
     }
 
     static String getLatitudeString(Double coord) {
