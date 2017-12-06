@@ -254,13 +254,13 @@ public class NafMessageResponseMapperTest {
     public void testParseInvalidStartRecord() throws PluginException {
     	String message = "//FR/SWE//AD/UVM//TM/POS//IR/SWE0000F1007//LT/57.037//LG/12.214//"
     					+ "SP/50//CO/190//DA/20170817//TI/0500//ER//";
-    	SetReportMovementType setReportMovementType = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
+    	NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
     }
     
     @Test(expected = PluginException.class)
     public void testParseInvalidEndRecord() throws PluginException {
     	String message = "//SR//FR/SWE//AD/UVM//TM/POS//IR/SWE0000F1007//LT/57.037//LG/12.214//"
     					+ "SP/50//CO/190//DA/20170817//TI/0500//";
-    	SetReportMovementType setReportMovementType = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
+    	NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
     }
 }
