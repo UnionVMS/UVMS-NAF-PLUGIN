@@ -10,7 +10,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
     <artifactId>naf</artifactId>
-    <version>3.0.7-SNAPSHOT</version>
+    <version>3.0.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Plugin template</description>
     
@@ -19,9 +19,9 @@
         <joda-time.version>2.9.9</joda-time.version>
 
         <uvms.common.version>3.0.5</uvms.common.version>
-        <asset.version>4.0.4</asset.version>
+        <asset.version>4.0.6</asset.version>
         <audit.model.version>4.0.4</audit.model.version>
-        <exchange.model.version>4.0.5</exchange.model.version>
+        <exchange.model.version>4.0.7</exchange.model.version>
 
         <project.scm.id>github</project.scm.id>
         <copy.ear.target>C:\dev\WebLogic\domain1213\servers\AdminServer\upload</copy.ear.target>

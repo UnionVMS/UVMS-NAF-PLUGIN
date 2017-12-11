@@ -6,6 +6,11 @@
         <param-name>resteasy.scan</param-name>
         <param-value>true</param-value>
     </context-param>
+    <!-- 
+    	Should this really be used, <url-pattern>/naf/rest/message/*</url-pattern> is wrong should be <url-pattern>/rest/message/*</url-pattern>
+    	in standalone-uvms.xml org.jboss.security.auth.certs.AnyCertVerifier that do not verify anything.
+    	
+    	
     <security-constraint>
         <display-name>Constraint1</display-name>
         <web-resource-collection>
@@ -28,4 +33,5 @@
         <description/>
         <role-name>JBossAdmin</role-name>
     </security-role>
+    -->
 </web-app>
