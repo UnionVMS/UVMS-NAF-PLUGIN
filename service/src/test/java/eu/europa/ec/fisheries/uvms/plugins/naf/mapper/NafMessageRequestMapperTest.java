@@ -21,8 +21,8 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementPoint;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
-import eu.europa.ec.fisheries.uvms.exchange.model.util.DateUtils;
-import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCodes;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
 import java.util.Date;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.junit.Assert;
@@ -126,7 +126,7 @@ public class NafMessageRequestMapperTest {
     @Test
     public void appendTest() {
         StringBuilder naf = new StringBuilder();
-        NafMessageRequestMapper.append(naf, NafCodes.TO, "VALUE");
+        NafMessageRequestMapper.append(naf, NafCode.TO.getCode(), "VALUE");
         String target = "AD/VALUE//";
         Assert.assertEquals(target, naf.toString());
     }
@@ -170,7 +170,7 @@ public class NafMessageRequestMapperTest {
         movement.setAssetId(assetId);
         
         StringBuilder naf = new StringBuilder();
-        NafMessageRequestMapper.appendAsset(naf, NafCodes.RADIO_CALL_SIGN, AssetIdType.IRCS, movement);
+        NafMessageRequestMapper.appendAsset(naf, NafCode.RADIO_CALL_SIGN.getCode(), AssetIdType.IRCS, movement);
         String target = "RC/IRCS//";
         
         Assert.assertEquals(target, naf.toString());

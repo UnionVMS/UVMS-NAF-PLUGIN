@@ -11,6 +11,13 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.service;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeTypeType;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.CommandType;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.CommandTypeType;
@@ -24,22 +31,11 @@ import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PollType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetReportRequest;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
-import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
 import eu.europa.ec.fisheries.uvms.plugins.naf.mapper.NafMessageRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.mapper.NafMessageResponseMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.message.NafMessageSenderBean;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.UUID;
 
 /**
  **/
@@ -56,10 +52,9 @@ public class PluginService {
     @EJB
     ExchangeService exchangeService;
 
-    final static Logger LOG = LoggerFactory.getLogger(PluginService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
 
     /**
-     * TODO implement
      *
      * @param reportRequest
      * @return
@@ -97,13 +92,12 @@ public class PluginService {
         if (message != null) {
             SetReportMovementType movement = NafMessageResponseMapper.mapToMovementType(message, startupBean.getRegisterClassName());
             LOG.info("[ Asynchronous call to sendMovementReportToExchange() ]");
-            exchangeService.sendMovementReportToExchange(movement, "NAF");
+            exchangeService.sendMovementReportToExchange(movement, userName);
             LOG.info("[ Returning ]");
         }
     }
 
     /**
-     * TODO implement
      *
      * @param command
      * @return

@@ -14,11 +14,15 @@ package eu.europa.ec.fisheries.uvms.plugins.naf.mapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -28,9 +32,10 @@ import org.junit.Test;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementPoint;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCodes;
+import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
 import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
 import eu.europa.ec.fisheries.uvms.plugins.naf.util.DateUtil;
 
@@ -57,7 +62,7 @@ public class NafMessageResponseMapperTest {
     public void tearDown() {
     }
 
-    // TODO add test methods here.
+    // Add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //
     @Test
@@ -80,48 +85,48 @@ public class NafMessageResponseMapperTest {
     public void mapEntryTest() {
         MovementBaseType movement = new MovementBaseType();
 
-        String[] course = {NafCodes.COURSE, "10.5"};
-        NafMessageResponseMapper.mapEntry(course, movement);
+        String course = "10.5";
+        NafMessageResponseMapper.mapEntry(NafCode.COURSE, course, movement);
 		assertEquals(10.5D, movement.getReportedCourse().doubleValue(), DELTA_VALUE);
 
-        String[] speed = {NafCodes.SPEED, "70"};
-        NafMessageResponseMapper.mapEntry(speed, movement);
+        String speed = "70";
+        NafMessageResponseMapper.mapEntry(NafCode.SPEED, speed, movement);
         assertEquals(7.0D, movement.getReportedSpeed().doubleValue(), DELTA_VALUE);
 
-        String[] date = {NafCodes.DATE, "20160208"};
-        NafMessageResponseMapper.mapEntry(date, movement);
+        String date = "20160208";
+        NafMessageResponseMapper.mapEntry(NafCode.DATE, date, movement);
         assertEquals("20160208", NafMessageResponseMapper.dateString);
 
-        String[] time = {NafCodes.TIME, "1527"};
-        NafMessageResponseMapper.mapEntry(time, movement);
+        String time = "1527";
+        NafMessageResponseMapper.mapEntry(NafCode.TIME, time, movement);
         assertEquals("1527", NafMessageResponseMapper.timeString);
 
-        String[] externalMark = {NafCodes.EXTERNAL_MARK, "ABC-123"};
-        NafMessageResponseMapper.mapEntry(externalMark, movement);
+        String externalMark = "ABC-123";
+        NafMessageResponseMapper.mapEntry(NafCode.EXTERNAL_MARK, externalMark, movement);
         assertEquals("ABC-123", movement.getExternalMarking());
 
-        String[] flag = {NafCodes.FLAG, "SWE"};
-        NafMessageResponseMapper.mapEntry(flag, movement);
+        String flag = "SWE";
+        NafMessageResponseMapper.mapEntry(NafCode.FLAG, flag, movement);
         assertEquals("SWE", movement.getFlagState());
 
-        String[] latN = {NafCodes.LATITUDE, "N1213"};
-        NafMessageResponseMapper.mapEntry(latN, movement);
+        String latN = "N1213";
+        NafMessageResponseMapper.mapEntry(NafCode.LATITUDE, latN, movement);
         assertEquals(12.2167D, movement.getPosition().getLatitude().doubleValue(), DELTA_VALUE);
 
-        String[] latS = {NafCodes.LATITUDE, "S1213"};
-        NafMessageResponseMapper.mapEntry(latS, movement);
+        String latS = "S1213";
+        NafMessageResponseMapper.mapEntry(NafCode.LATITUDE, latS, movement);
         assertEquals(-12.2167D, movement.getPosition().getLatitude().doubleValue(), DELTA_VALUE);
 
-        String[] lonN = {NafCodes.LONGITUDE, "E1417"};
-        NafMessageResponseMapper.mapEntry(lonN, movement);
+        String lonN = "E1417";
+        NafMessageResponseMapper.mapEntry(NafCode.LONGITUDE, lonN, movement);
         assertEquals(14.2833D, movement.getPosition().getLongitude().doubleValue(), DELTA_VALUE);
 
-        String[] lonS = {NafCodes.LONGITUDE, "W1417"};
-        NafMessageResponseMapper.mapEntry(lonS, movement);
+        String lonS = "W1417";
+        NafMessageResponseMapper.mapEntry(NafCode.LONGITUDE, lonS, movement);
         assertEquals(-14.2833D, movement.getPosition().getLongitude().doubleValue(), DELTA_VALUE);
 
-        String[] callSign = {NafCodes.RADIO_CALL_SIGN, "SMIT"};
-        NafMessageResponseMapper.mapEntry(callSign, movement);
+        String callSign = "SMIT";
+        NafMessageResponseMapper.mapEntry(NafCode.RADIO_CALL_SIGN, callSign, movement);
         assertEquals("SMIT", movement.getAssetId().getAssetIdList().get(0).getValue());
     }
 
@@ -197,5 +202,65 @@ public class NafMessageResponseMapperTest {
         NafMessageResponseMapper.mapSpeed(movement, speed);
 
         assertEquals(10.5, movement.getReportedSpeed().doubleValue(), DELTA_VALUE);
+    }
+    
+    @Test
+    public void testParseNormalNAFMessage() throws PluginException {
+    	String message = "//SR//FR/SWE//AD/UVM//TM/POS//RC/F1007//IR/SWE0000F1007//XR/EXT3//LT/57.037//LG/12.214//"
+    					+ "SP/50//CO/190//DA/20170817//TI/0500//NA/Ship1007//FS/SWE//ER//";
+    	SetReportMovementType setReportMovementType = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
+    	MovementBaseType movement = setReportMovementType.getMovement();
+    	assertEquals(MovementTypeType.POS, movement.getMovementType());
+    	assertEquals("F1007", movement.getIrcs());
+    	assertEquals("SWE0000F1007", movement.getInternalReferenceNumber());
+    	assertEquals("EXT3", movement.getExternalMarking());
+    	assertEquals(57.037d, movement.getPosition().getLatitude(), DELTA_VALUE);
+    	assertEquals(12.214d, movement.getPosition().getLongitude(), DELTA_VALUE);
+    	assertEquals(5d, movement.getReportedSpeed(), DELTA_VALUE);
+    	assertEquals(190d, movement.getReportedCourse(), DELTA_VALUE);
+    	Calendar c = Calendar.getInstance();
+    	c.set(2017, 7, 17, 5, 0, 0);
+    	c.set(Calendar.MILLISECOND, 0);
+    	Date expectedDate = c.getTime();
+    	assertEquals(expectedDate, movement.getPositionTime());
+    	assertEquals("Ship1007", movement.getAssetName());
+    	assertEquals("SWE", movement.getFlagState());
+    }
+    
+    @Test
+    public void testParseNAFMessageWithEmptyIRCSValue() throws PluginException {
+    	String message = "//SR//FR/SWE//AD/UVM//TM/POS//RC///IR/SWE0000F1007//XR/EXT3//LT/57.037//LG/12.214//"
+    					+ "SP/50//CO/190//DA/20170817//TI/0500//NA/Ship1007//FS/SWE//ER//";
+    	SetReportMovementType setReportMovementType = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
+    	MovementBaseType movement = setReportMovementType.getMovement();
+    	assertEquals(MovementTypeType.POS, movement.getMovementType());
+    	assertTrue(StringUtils.isBlank(movement.getIrcs()));
+    	assertEquals("SWE0000F1007", movement.getInternalReferenceNumber());
+    	assertEquals("EXT3", movement.getExternalMarking());
+    	assertEquals(57.037d, movement.getPosition().getLatitude(), DELTA_VALUE);
+    	assertEquals(12.214d, movement.getPosition().getLongitude(), DELTA_VALUE);
+    	assertEquals(5d, movement.getReportedSpeed(), DELTA_VALUE);
+    	assertEquals(190d, movement.getReportedCourse(), DELTA_VALUE);
+    	Calendar c = Calendar.getInstance();
+    	c.set(2017, 7, 17, 5, 0, 0);
+    	c.set(Calendar.MILLISECOND, 0);
+    	Date expectedDate = c.getTime();
+    	assertEquals(expectedDate, movement.getPositionTime());
+    	assertEquals("Ship1007", movement.getAssetName());
+    	assertEquals("SWE", movement.getFlagState());
+    }
+    
+    @Test(expected = PluginException.class)
+    public void testParseInvalidStartRecord() throws PluginException {
+    	String message = "//FR/SWE//AD/UVM//TM/POS//IR/SWE0000F1007//LT/57.037//LG/12.214//"
+    					+ "SP/50//CO/190//DA/20170817//TI/0500//ER//";
+    	NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
+    }
+    
+    @Test(expected = PluginException.class)
+    public void testParseInvalidEndRecord() throws PluginException {
+    	String message = "//SR//FR/SWE//AD/UVM//TM/POS//IR/SWE0000F1007//LT/57.037//LG/12.214//"
+    					+ "SP/50//CO/190//DA/20170817//TI/0500//";
+    	NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
     }
 }
