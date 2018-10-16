@@ -11,18 +11,17 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.service;
 
+import java.util.Date;
 import java.util.UUID;
-
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.jms.JMSException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
@@ -35,7 +34,7 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.producer.PluginMessageProducer;
 @Stateless
 public class ExchangeService {
 
-    final static Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
 
     @EJB
     StartupBean startupBean;
@@ -46,7 +45,7 @@ public class ExchangeService {
     @Asynchronous
     public void sendMovementReportToExchange(SetReportMovementType reportType, String userName) {
         try {
-            String text = ExchangeModuleRequestMapper.createSetMovementReportRequest(reportType, userName);
+            String text = ExchangeModuleRequestMapper.createSetMovementReportRequest(reportType, userName, null, new Date(), null, PluginType.NAF, PluginType.NAF.value(), null);
             sendMovementReportToExchange(text, reportType);
         } catch (ExchangeModelMarshallException e) {
             LOG.error("Couldn't map movement to String");
