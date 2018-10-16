@@ -19,7 +19,7 @@
         <joda-time.version>2.9.9</joda-time.version>
 
         <uvms.common.version>3.0.17</uvms.common.version>
-        <exchange.model.version>4.0.11</exchange.model.version>
+        <exchange.model.version>4.0.22</exchange.model.version>
 
         <project.scm.id>github</project.scm.id>
         <copy.ear.target>C:\dev\WebLogic\domain1213\servers\AdminServer\upload</copy.ear.target>
