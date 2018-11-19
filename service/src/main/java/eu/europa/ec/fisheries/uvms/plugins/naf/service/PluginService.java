@@ -44,13 +44,13 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.message.NafMessageSenderBean;
 public class PluginService {
     
     @EJB
-    StartupBean startupBean;
+    private StartupBean startupBean;
     
     @EJB
-    NafMessageSenderBean sender;
+    private NafMessageSenderBean sender;
     
     @EJB
-    ExchangeService exchangeService;
+    private ExchangeService exchangeService;
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
 

@@ -5,7 +5,7 @@
 		<groupId>fish.focus.uvms.maven</groupId>
 		<artifactId>uvms-pom</artifactId>
 		<relativePath />
-		<version>1.14</version>
+		<version>1.21</version>
 	</parent>
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
@@ -18,8 +18,10 @@
         <swagger.version>1.3.1</swagger.version>
         <joda-time.version>2.9.9</joda-time.version>
 
-        <uvms.common.version>3.0.17</uvms.common.version>
+        <uvms.common.version>3.0.29</uvms.common.version>
         <exchange.model.version>4.0.22</exchange.model.version>
+
+        <javaee.version>8.0</javaee.version>
 
         <project.scm.id>github</project.scm.id>
         <copy.ear.target>C:\dev\WebLogic\domain1213\servers\AdminServer\upload</copy.ear.target>
@@ -30,6 +32,7 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
+            <version>${javaee.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>

@@ -19,8 +19,9 @@ public class ErrorHandler {
 
     public static ResponseDto getFault(Exception e) {
         if (PluginException.class.equals(e.getClass())) {
-            return new ResponseDto<String>(e.getMessage(), RestResponseCode.SERVICE_ERROR);
+            return new ResponseDto<>(e.getMessage(), RestResponseCode.SERVICE_ERROR);
         }
-        return new ResponseDto<String>(e.getMessage(), RestResponseCode.UNDEFINED_ERROR);
+        return new ResponseDto<>(e.getMessage(), RestResponseCode.UNDEFINED_ERROR);
     }
+
 }

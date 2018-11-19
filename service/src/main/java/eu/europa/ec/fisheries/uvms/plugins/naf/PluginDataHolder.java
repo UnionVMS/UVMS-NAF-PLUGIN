@@ -21,9 +21,9 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
  **/
 public abstract class PluginDataHolder {
 
-    public static final String PLUGIN_PROPERTIES = "naf.properties";
-    public static final String PROPERTIES = "settings.properties";
-    public static final String CAPABILITIES = "capabilities.properties";
+    static final String PLUGIN_PROPERTIES = "naf.properties";
+    static final String PROPERTIES = "settings.properties";
+    static final String CAPABILITIES = "capabilities.properties";
 
     private Properties nafApplicaitonProperties;
     private Properties nafProperties;

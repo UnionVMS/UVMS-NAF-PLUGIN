@@ -18,28 +18,30 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.service.PluginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.*;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.Collection;
 import javax.ejb.EJB;
-import javax.servlet.*;
-import javax.servlet.annotation.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URLDecoder;
 
 
-@WebServlet(name="nafServlet", urlPatterns={"/rest/message/*"},
-        initParams={ @WebInitParam(name="simpleParam", value="paramValue") } )
+@WebServlet(name = "nafServlet", urlPatterns = {"/rest/message/*"},
+        initParams = {@WebInitParam(name = "simpleParam", value = "paramValue")})
 
 public class NafServlet extends HttpServlet {
 
-    final static Logger LOG = LoggerFactory.getLogger(NafServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NafServlet.class);
 
     @EJB
-    PluginService pluginService;
+    private PluginService pluginService;
+
     @EJB
-    StartupBean startupBean;
+    private StartupBean startupBean;
 
     protected void doGet(HttpServletRequest httpRequest, HttpServletResponse response) throws ServletException, IOException {
         long in = System.currentTimeMillis();
@@ -59,7 +61,7 @@ public class NafServlet extends HttpServlet {
         }
         String message = parts[parts.length - 1];
         message = URLDecoder.decode(message, "iso-8859-1");
-        message = new String(message.getBytes("ISO-8859-1"),"UTF-8");
+        message = new String(message.getBytes("ISO-8859-1"), "UTF-8");
 
 
         LOG.info("[ NAF INPUT  ]: {}", message);
@@ -71,16 +73,13 @@ public class NafServlet extends HttpServlet {
                 long time = System.currentTimeMillis() - in;
                 LOG.debug("Run time: " + time);
                 respond(response, 200, "OK");
-                return;
             } catch (Exception e) {
                 LOG.error("[ Exception while handling NAF request ] {}", e);
                 respond(response, 500, "NOK");
-                return;
             }
         } else {
             LOG.error("[ Unauthorized NAF request ]");
             respond(response, 401, "Unauthorized");
-            return;
         }
 
     }
@@ -95,7 +94,7 @@ public class NafServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request,response);
+        doGet(request, response);
     }
 
 }
