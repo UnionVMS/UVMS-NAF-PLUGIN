@@ -36,8 +36,8 @@ public class NafMessageResponseMapper {
     
     private static final Logger LOG = LoggerFactory.getLogger(NafMessageResponseMapper.class);
 
-    private static String dateString;
-    private static String timeString;
+    static String dateString;
+    static String timeString;
     
     public static SetReportMovementType mapToMovementType(String nafMessage, String pluginName) throws PluginException {
         dateString = "";

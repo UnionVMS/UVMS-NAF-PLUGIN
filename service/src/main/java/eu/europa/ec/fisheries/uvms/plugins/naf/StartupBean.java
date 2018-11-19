@@ -31,6 +31,7 @@ import javax.ejb.*;
 import java.util.Map;
 
 @Singleton
+@DependsOn("PluginToEventBusTopicProducer")
 @Startup
 public class StartupBean extends PluginDataHolder {
 
@@ -70,15 +71,9 @@ public class StartupBean extends PluginDataHolder {
         capabilities = ServiceMapper.getCapabilitiesListTypeFromMap(super.getCapabilities());
         settingList = ServiceMapper.getSettingsListTypeFromMap(super.getSettings());
 
-        serviceType = ServiceMapper.getServiceType(
-                getRegisterClassName(),
-                getApplicaionName(),
-                "Plugin for sending and recieving data to and from NAF",
-                PluginType.NAF,
-                getPluginResponseSubscriptionName());
-
+        serviceType = ServiceMapper.getServiceType(getRegisterClassName(), getApplicaionName(), "Plugin for sending and recieving data to and from NAF",
+                PluginType.NAF, getPluginResponseSubscriptionName());
         register();
-
         LOG.debug("Settings updated in plugin {}", REGISTER_CLASS_NAME);
         for (Map.Entry<String, String> entry : super.getSettings().entrySet()) {
             LOG.debug("Setting: KEY: {} , VALUE: {}", entry.getKey(), entry.getValue());
@@ -87,10 +82,6 @@ public class StartupBean extends PluginDataHolder {
         LOG.info("PLUGIN STARTED");
     }
 
-    @PreDestroy
-    public void shutdown() {
-        unregister();
-    }
 
     @Schedule(second = "*/10", minute = "*", hour = "*", persistent = false)
     public void timeout(Timer timer) {
@@ -104,6 +95,7 @@ public class StartupBean extends PluginDataHolder {
             timer.cancel();
         } else if(numberOfTriesExecuted >= MAX_NUMBER_OF_TRIES) {
             LOG.info(getRegisterClassName() + " failed to register, maximum number of retries reached.");
+            timer.cancel();
         }
     }
 
@@ -120,11 +112,13 @@ public class StartupBean extends PluginDataHolder {
 
     }
 
-    private void unregister() {
+    @PreDestroy
+    public void unregister() {
         LOG.info("Unregistering from Exchange Module");
         try {
             String unregisterServiceRequest = ExchangeModuleRequestMapper.createUnregisterServiceRequest(serviceType);
             messageProducer.sendEventBusMessage(unregisterServiceRequest, ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
+            LOG.info("Unregistering Request sent...");
         } catch (MessageException | ExchangeModelMarshallException e) {
             LOG.error("Failed to send unregistration message to {}", ExchangeModelConstants.EXCHANGE_REGISTER_SERVICE);
         }
