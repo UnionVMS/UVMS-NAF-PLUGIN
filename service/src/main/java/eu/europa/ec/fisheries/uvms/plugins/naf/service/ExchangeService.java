@@ -11,22 +11,22 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.service;
 
-import java.util.Date;
-import java.util.UUID;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
+import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
+import eu.europa.ec.fisheries.uvms.plugins.naf.producer.PluginToExchangeProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.jms.JMSException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
-import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
-import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.naf.constants.ModuleQueue;
-import eu.europa.ec.fisheries.uvms.plugins.naf.producer.PluginMessageProducer;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  **/
@@ -37,10 +37,10 @@ public class ExchangeService {
     private static final Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
 
     @EJB
-    StartupBean startupBean;
+    private StartupBean startupBean;
 
     @EJB
-    PluginMessageProducer producer;
+    private PluginToExchangeProducer producer;
 
     @Asynchronous
     public void sendMovementReportToExchange(SetReportMovementType reportType, String userName) {
@@ -56,9 +56,9 @@ public class ExchangeService {
     @Asynchronous
     public void sendMovementReportToExchange(String report, SetReportMovementType reportType) {
         try {
-            producer.sendModuleMessage(report, ModuleQueue.EXCHANGE);
+            producer.sendModuleMessage(report,null);
             LOG.info("[ Movement sent to Exchange ]");
-        } catch (JMSException e) {
+        } catch (MessageException e) {
             LOG.error("couldn't send movement");
             startupBean.getCachedMovement().put(UUID.randomUUID().toString(), reportType);
         }

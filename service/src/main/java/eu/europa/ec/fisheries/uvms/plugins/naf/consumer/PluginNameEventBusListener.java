@@ -11,60 +11,45 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.consumer;
 
-import javax.ejb.EJB;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeType;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeTypeType;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PingRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.PluginBaseRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetCommandRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetConfigRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetReportRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.StartRequest;
-import eu.europa.ec.fisheries.schema.exchange.plugin.v1.StopRequest;
+import eu.europa.ec.fisheries.schema.exchange.plugin.v1.*;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangePluginResponseMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.naf.producer.PluginMessageProducer;
+import eu.europa.ec.fisheries.uvms.plugins.naf.producer.PluginToExchangeProducer;
 import eu.europa.ec.fisheries.uvms.plugins.naf.service.PluginService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 
 public class PluginNameEventBusListener implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginNameEventBusListener.class);
 
     @EJB
-    PluginService service;
+    private PluginService service;
 
     @EJB
-    PluginMessageProducer messageProducer;
+    private PluginToExchangeProducer messageProducer;
 
     @EJB
-    StartupBean startup;
+    private StartupBean startup;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
-
         LOG.debug("Eventbus listener for naf (MessageConstants.PLUGIN_SERVICE_CLASS_NAME): {}", startup.getRegisterClassName());
-
         TextMessage textMessage = (TextMessage) inMessage;
-
         try {
-
             PluginBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, PluginBaseRequest.class);
-
             String responseMessage = null;
-
             switch (request.getMethod()) {
                 case SET_CONFIG:
                     SetConfigRequest setConfigRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetConfigRequest.class);
@@ -104,12 +89,10 @@ public class PluginNameEventBusListener implements MessageListener {
                     LOG.error("Not supported method");
                     break;
             }
-
-            messageProducer.sendResponseMessage(responseMessage, textMessage);
-
+            messageProducer.sendResponseMessageToSender(textMessage, responseMessage);
         } catch (ExchangeModelMarshallException | NullPointerException e) {
             LOG.error("[ Error when receiving message in naf " + startup.getRegisterClassName() + " ]", e);
-        } catch (JMSException ex) {
+        } catch (JMSException | MessageException ex) {
             LOG.error("[ Error when handling JMS message in naf " + startup.getRegisterClassName() + " ]", ex);
         }
     }

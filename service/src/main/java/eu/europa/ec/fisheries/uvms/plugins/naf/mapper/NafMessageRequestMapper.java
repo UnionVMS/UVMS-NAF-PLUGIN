@@ -61,18 +61,18 @@ public class NafMessageRequestMapper {
         return naf.toString();
     }
 
-    static void appendEndRecord(StringBuilder naf) {
+    private static void appendEndRecord(StringBuilder naf) {
         naf.append(NafCode.END_RECORD.getCode());
         naf.append(NafCode.DELIMITER);
     }
 
-    static void appendStartRecord(StringBuilder naf) {
+    private static void appendStartRecord(StringBuilder naf) {
         naf.append(NafCode.DELIMITER);
         naf.append(NafCode.START_RECORD.getCode());
         naf.append(NafCode.DELIMITER);
     }
 
-    static void appendPosition(StringBuilder naf, MovementType movement) {
+    private static void appendPosition(StringBuilder naf, MovementType movement) {
         if (MovementSourceType.MANUAL.equals(movement.getSource())) {
             append(naf, NafCode.LATITUDE.getCode(), getLatitudeString(movement.getPosition().getLatitude()));
             append(naf, NafCode.LONGITUDE.getCode(), getLongitudeString(movement.getPosition().getLongitude()));
@@ -130,7 +130,7 @@ public class NafMessageRequestMapper {
         return date.toString();
     }
     
-    static void append(StringBuilder naf, String key, Number value) {
+    private static void append(StringBuilder naf, String key, Number value) {
         if (value != null && Math.floor(value.doubleValue()) == value.doubleValue()) {
             append(naf, key, String.valueOf(value.intValue()));
         } else {

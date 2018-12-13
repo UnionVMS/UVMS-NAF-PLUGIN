@@ -11,22 +11,22 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 /**
  **/
 public class DateUtil {
-    final static Logger LOG = LoggerFactory.getLogger(DateUtil.class);
-    private final static String DATE_TIME_FORMAT = "yyyyMMdd HHmm z";
+
+    private static final Logger LOG = LoggerFactory.getLogger(DateUtil.class);
+
+    private static final String DATE_TIME_FORMAT = "yyyyMMdd HHmm z";
+
     private static Date parseToUTC(String format, String dateString) {
     	DateTimeFormatter formatter = DateTimeFormat.forPattern(format);
     	DateTime dateTime = formatter.withZoneUTC().parseDateTime(dateString);

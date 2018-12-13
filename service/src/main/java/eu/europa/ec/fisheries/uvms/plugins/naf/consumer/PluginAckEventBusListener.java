@@ -31,23 +31,17 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
 
 public class PluginAckEventBusListener implements MessageListener {
 
-    final static Logger LOG = LoggerFactory.getLogger(PluginAckEventBusListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginAckEventBusListener.class);
 
     @EJB
-    StartupBean startupService;
+    private StartupBean startupService;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void onMessage(Message inMessage) {
-
         LOG.info("Eventbus listener for naf at selector: {} got a message", startupService.getPluginResponseSubscriptionName());
-
         TextMessage textMessage = (TextMessage) inMessage;
-
         try {
-
             ExchangeRegistryBaseRequest request = tryConsumeRegistryBaseRequest(textMessage);
-
             if (request == null) {
                 PluginFault fault = JAXBMarshaller.unmarshallTextMessage(textMessage, PluginFault.class);
                 handlePluginFault(fault);

@@ -15,28 +15,31 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafConfigKeys;
 import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-import org.slf4j.LoggerFactory;
 
 /**
  **/
 @LocalBean
 @Stateless
 public class NafMessageSenderBean {
-    final static org.slf4j.Logger LOG = LoggerFactory.getLogger(NafMessageSenderBean.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(NafMessageSenderBean.class);
     
     @EJB
-    StartupBean startupBean;
+    private StartupBean startupBean;
     
     private int connectTimeout = 30000;
     private int readTimeout = 30000;
@@ -107,9 +110,7 @@ public class NafMessageSenderBean {
         }
         
         try {
-            String proxyUrl = proxy.concat("?target=")
-                                   .concat(URLEncoder.encode(endpoint.replace("#MESSAGE#", message), CHARACTER_CODING));
-            
+            String proxyUrl = proxy.concat("?target=").concat(URLEncoder.encode(endpoint.replace("#MESSAGE#", message), CHARACTER_CODING));
             URL url = new URL(proxyUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");

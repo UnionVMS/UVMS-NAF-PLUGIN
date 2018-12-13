@@ -11,40 +11,31 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.mapper;
 
-import java.util.Iterator;
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.schema.exchange.service.v1.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityListType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityTypeType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
-import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingType;
-
 /**
  **/
 public class ServiceMapper {
-	
-	private ServiceMapper() {}
 
-	private static final Logger LOG = LoggerFactory.getLogger(ServiceMapper.class);
+    private ServiceMapper() {
+    }
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceMapper.class);
 
     public static ServiceType getServiceType(String serviceClassName, String nafDisplayName, String description, PluginType nafType, String responseMessageName) {
-
         if (responseMessageName == null) {
             throw new IllegalArgumentException("Response message must be provided!");
         }
-
         if (serviceClassName == null) {
             throw new IllegalArgumentException("ServiceClassName message must be provided!");
         }
-
         ServiceType serviceType = new ServiceType();
         serviceType.setDescription(description);
         serviceType.setName(nafDisplayName);
@@ -56,9 +47,7 @@ public class ServiceMapper {
 
     public static SettingListType getSettingsListTypeFromMap(ConcurrentMap<String, String> settings) {
         SettingListType settingListType = new SettingListType();
-        Iterator<Map.Entry<String, String>> itr = settings.entrySet().iterator();
-        while (itr.hasNext()) {
-            Map.Entry<String, String> tmp = itr.next();
+        for (Map.Entry<String, String> tmp : settings.entrySet()) {
             SettingType setting = new SettingType();
             setting.setKey(tmp.getKey());
             setting.setValue(tmp.getValue());
@@ -69,17 +58,13 @@ public class ServiceMapper {
 
     public static CapabilityListType getCapabilitiesListTypeFromMap(ConcurrentMap<String, String> capabilities) {
         CapabilityListType capabilityListType = new CapabilityListType();
-        Iterator<Map.Entry<String, String>> itr = capabilities.entrySet().iterator();
-        while (itr.hasNext()) {
-            Map.Entry<String, String> tmp = itr.next();
+        for (Map.Entry<String, String> tmp : capabilities.entrySet()) {
             CapabilityType setting = new CapabilityType();
-
             try {
                 setting.setType(CapabilityTypeType.valueOf(tmp.getKey()));
             } catch (Exception e) {
                 LOG.error("Error when parsing to Enum type from String KEY: {}", tmp.getKey());
             }
-
             setting.setValue(tmp.getValue());
             capabilityListType.getCapability().add(setting);
         }
@@ -97,7 +82,6 @@ public class ServiceMapper {
                 map.put(keyString, valueString);
             }
         }
-
     }
 
 }

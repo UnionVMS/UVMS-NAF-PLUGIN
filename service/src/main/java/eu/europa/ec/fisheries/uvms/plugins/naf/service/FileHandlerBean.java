@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class FileHandlerBean {
 
-    final static Logger LOG = LoggerFactory.getLogger(FileHandlerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileHandlerBean.class);
 
     public Properties getPropertiesFromFile(String fileName) {
         Properties props = new Properties();

@@ -11,30 +11,22 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.mapper;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetId;
+import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdList;
+import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.*;
+import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
+import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
+import eu.europa.ec.fisheries.uvms.plugins.naf.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetId;
-import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdList;
-import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementActivityType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementActivityTypeType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementBaseType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementComChannelType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementPoint;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementSourceType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
-import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
-import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
-import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
-import eu.europa.ec.fisheries.uvms.plugins.naf.util.DateUtil;
 
 /**
  **/
@@ -43,14 +35,13 @@ public class NafMessageResponseMapper {
 	private NafMessageResponseMapper() {}
     
     private static final Logger LOG = LoggerFactory.getLogger(NafMessageResponseMapper.class);
-    
+
     static String dateString;
     static String timeString;
     
     public static SetReportMovementType mapToMovementType(String nafMessage, String pluginName) throws PluginException {
         dateString = "";
         timeString = "";
-
 		SetReportMovementType movementType = new SetReportMovementType();
 		try {
 			String decodedNafMessage = URLDecoder.decode(nafMessage, "UTF-8");
@@ -69,7 +60,6 @@ public class NafMessageResponseMapper {
 			}
 
 			mapDateTime(movement);
-
 			movementType.setMovement(movement);
 			movementType.setPluginType(PluginType.NAF);
 			movementType.setPluginName(pluginName);
@@ -139,7 +129,7 @@ public class NafMessageResponseMapper {
 		}
 	}
 
-    static void mapTripNumber(String value, MovementBaseType movement) {
+    private static void mapTripNumber(String value, MovementBaseType movement) {
         try {
             Double tripNumber = Double.valueOf(value);
             movement.setTripNumber(tripNumber);
@@ -148,7 +138,7 @@ public class NafMessageResponseMapper {
         }
     }
 
-    static void mapActivity(MovementBaseType movement, String value) {
+    private static void mapActivity(MovementBaseType movement, String value) {
         MovementActivityType activity = new MovementActivityType();
         activity.setMessageType(MovementActivityTypeType.valueOf(value));
         movement.setActivity(activity);
@@ -205,7 +195,7 @@ public class NafMessageResponseMapper {
         return pos;
     }
 
-    static void mapLongitude(MovementBaseType movement, String value, NafCode key) {
+    private static void mapLongitude(MovementBaseType movement, String value, NafCode key) {
         MovementPoint pos = getMovementPoint(movement);
         if (NafCode.LONGITUDE_DECIMAL.equals(key)) {
             pos.setLongitude(Double.valueOf(value));
@@ -219,7 +209,7 @@ public class NafMessageResponseMapper {
         movement.setPosition(pos);
     }
 
-    static void mapLatitude(MovementBaseType movement, String value, NafCode key) {
+    private static void mapLatitude(MovementBaseType movement, String value, NafCode key) {
         MovementPoint pos = getMovementPoint(movement);
         if (NafCode.LATITUDE_DECIMAL.equals(key)) {
             pos.setLatitude(Double.valueOf(value));
@@ -233,16 +223,16 @@ public class NafMessageResponseMapper {
         movement.setPosition(pos);
     }
 
-    static double positionStringToDecimalDegrees(String value) {
+    private static double positionStringToDecimalDegrees(String value) {
         double deg = (charToDouble(value.charAt(1)) * 10) + charToDouble(value.charAt(2));
         double min = (charToDouble(value.charAt(3)) * 10) + charToDouble(value.charAt(4));
         double decimalDegrees = deg + (min / 60);
         BigDecimal bd = BigDecimal.valueOf(decimalDegrees).setScale(4, RoundingMode.HALF_EVEN);
         decimalDegrees = bd.doubleValue();
-        return Double.valueOf(decimalDegrees);
+        return decimalDegrees;
     }
     
-    static double charToDouble(char val) {
+    private static double charToDouble(char val) {
         String str = Character.toString(val);
         return Double.valueOf(str);
     }
