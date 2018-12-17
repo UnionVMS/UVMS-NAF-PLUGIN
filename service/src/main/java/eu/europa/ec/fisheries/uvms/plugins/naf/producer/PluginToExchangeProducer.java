@@ -11,17 +11,24 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.plugins.naf.producer;
 
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
 
 @Stateless
-@LocalBean
 public class PluginToExchangeProducer extends AbstractProducer {
 
     @Override
     public String getDestinationName() {
         return MessageConstants.QUEUE_EXCHANGE_EVENT;
+    }
+
+    @Override
+    public String sendModuleMessage(final String text, final Destination replyTo) throws MessageException {
+        // Make sure we do NOT create yet another new TX.
+        return sendModuleMessageWithProps(text, replyTo, null, DeliveryMode.PERSISTENT, 0L);
     }
 }
