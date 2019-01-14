@@ -12,7 +12,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.plugins.naf.service;
 
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.slf4j.Logger;
@@ -39,7 +38,6 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.message.NafMessageSenderBean;
 
 /**
  **/
-@LocalBean
 @Stateless
 public class PluginService {
     
@@ -85,14 +83,10 @@ public class PluginService {
     }
 
     public void setMessageReceived(String message) throws PluginException {
-        setMessageReceived(message, "NAF");
-    }
-
-    public void setMessageReceived(String message, String userName) throws PluginException {
         if (message != null) {
             SetReportMovementType movement = NafMessageResponseMapper.mapToMovementType(message, startupBean.getRegisterClassName());
             LOG.info("[ Asynchronous call to sendMovementReportToExchange() ]");
-            exchangeService.sendMovementReportToExchange(movement, userName);
+            exchangeService.sendMovementReportToExchange(movement, "NAF");
             LOG.info("[ Returning ]");
         }
     }

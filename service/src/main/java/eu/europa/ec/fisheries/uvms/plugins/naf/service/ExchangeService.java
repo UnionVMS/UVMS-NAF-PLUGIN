@@ -23,14 +23,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import java.util.Date;
 import java.util.UUID;
 
 /**
  **/
-@LocalBean
 @Stateless
 public class ExchangeService {
 
@@ -46,21 +44,11 @@ public class ExchangeService {
     public void sendMovementReportToExchange(SetReportMovementType reportType, String userName) {
         try {
             String text = ExchangeModuleRequestMapper.createSetMovementReportRequest(reportType, userName, null, new Date(), null, PluginType.NAF, PluginType.NAF.value(), null);
-            sendMovementReportToExchange(text, reportType);
-        } catch (ExchangeModelMarshallException e) {
+            producer.sendModuleMessage(text,null);
+        } catch (ExchangeModelMarshallException | MessageException e) {
             LOG.error("Couldn't map movement to String");
             startupBean.getCachedMovement().put(UUID.randomUUID().toString(), reportType);
         }
     }
 
-    @Asynchronous
-    public void sendMovementReportToExchange(String report, SetReportMovementType reportType) {
-        try {
-            producer.sendModuleMessage(report,null);
-            LOG.info("[ Movement sent to Exchange ]");
-        } catch (MessageException e) {
-            LOG.error("couldn't send movement");
-            startupBean.getCachedMovement().put(UUID.randomUUID().toString(), reportType);
-        }
-    }
 }
