@@ -21,11 +21,12 @@ import eu.europa.ec.fisheries.uvms.plugins.naf.producer.PluginToExchangeProducer
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jms.*;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  **/
@@ -35,20 +36,57 @@ public class ExchangeService {
     private static final Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
 
     @EJB
-    private StartupBean startupBean;
-
-    @EJB
     private PluginToExchangeProducer producer;
+
+
+    @Resource(mappedName = "java:/ConnectionFactory")
+    private ConnectionFactory connectionFactory;
+    @Resource(mappedName = "java:/jms/queue/UVMSPluginFailedReport")
+    private Queue errorQueue;
+
 
     @Asynchronous
     public void sendMovementReportToExchange(SetReportMovementType reportType, String userName) {
+
+        String text = "";
+
         try {
-            String text = ExchangeModuleRequestMapper.createSetMovementReportRequest(reportType, userName, null, new Date(), null, PluginType.NAF, PluginType.NAF.value(), null);
-            producer.sendModuleMessage(text,null);
-        } catch (ExchangeModelMarshallException | MessageException e) {
+            text = ExchangeModuleRequestMapper.createSetMovementReportRequest(reportType, userName, null, new Date(), null, PluginType.NAF, PluginType.NAF.value(), null);
+        } catch (ExchangeModelMarshallException e) {
             LOG.error("Couldn't map movement to String");
-            startupBean.getCachedMovement().put(UUID.randomUUID().toString(), reportType);
+            sendToErrorQueue(reportType.toString());
+            return;
+        }
+
+
+        try {
+            producer.sendModuleMessage(text, null);
+        } catch (MessageException e) {
+            LOG.error("Couldn't send NAF positionReport to exchange");
+            sendToErrorQueue(text);
         }
     }
 
+    private void sendToErrorQueue(String movement) {
+        try (
+                Connection connection = connectionFactory.createConnection();
+                Session session = connection.createSession(false, 1);
+                MessageProducer producer = session.createProducer(errorQueue)
+        ) {
+            producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+
+            // emit
+
+            try {
+                TextMessage message = session.createTextMessage();
+                message.setStringProperty("source", "NAF");
+                message.setText(movement);
+                producer.send(message);
+            } catch (Exception e) {
+                LOG.info("//NOP: {}", e.getLocalizedMessage());
+            }
+        } catch (JMSException e) {
+            LOG.error("couldn't send movement");
+        }
+    }
 }
