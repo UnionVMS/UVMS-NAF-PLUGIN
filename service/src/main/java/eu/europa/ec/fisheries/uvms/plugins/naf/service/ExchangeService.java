@@ -59,7 +59,7 @@ public class ExchangeService {
             text = ExchangeModuleRequestMapper.createSetMovementReportRequest(reportType, userName, null, new Date(), null, PluginType.NAF, PluginType.NAF.value(), null);
         } catch (ExchangeModelMarshallException e) {
             LOG.error("Couldn't map movement to String");
-            sendToErrorQueue(reportType.toString());
+            sendToErrorQueue(text);
             return;
         }
 
@@ -67,10 +67,10 @@ public class ExchangeService {
         try {
             producer.sendModuleMessage(text, null);
         } catch (MessageException e) {
-            LOG.error("Couldn't send NAF positionReport to exchange");
+            LOG.error("Couldn't send NAF positionReport to exchange. Trying again later");
             MovementBaseType tmp = reportType.getMovement();
             if(tmp != null) {
-                startupBean.getCachedMovement().put(tmp.getMmsi(), tmp);
+                startupBean.addCachedMovement(reportType);
             }
             sendToErrorQueue(text);
         }

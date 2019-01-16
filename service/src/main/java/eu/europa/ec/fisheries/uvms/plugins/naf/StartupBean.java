@@ -11,6 +11,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.CapabilityListType;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.ServiceType;
@@ -21,6 +22,7 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.mapper.ServiceMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.producer.PluginToEventBusTopicProducer;
+import eu.europa.ec.fisheries.uvms.plugins.naf.service.ExchangeService;
 import eu.europa.ec.fisheries.uvms.plugins.naf.service.FileHandlerBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.*;
+import java.util.List;
 import java.util.Map;
 
 @Singleton
@@ -49,6 +52,10 @@ public class StartupBean extends PluginDataHolder {
 
     @EJB
     private FileHandlerBean fileHandler;
+
+    @EJB
+    private ExchangeService exchangeService;
+
 
     private CapabilityListType capabilities;
     private SettingListType settingList;
@@ -96,6 +103,17 @@ public class StartupBean extends PluginDataHolder {
         } else if(numberOfTriesExecuted >= MAX_NUMBER_OF_TRIES) {
             LOG.info(getRegisterClassName() + " failed to register, maximum number of retries reached.");
             timer.cancel();
+        }
+    }
+
+
+    @Schedule(minute = "*/15", hour = "*", persistent = false)
+    public void resend(Timer timer) {
+        if (isRegistered) {
+            List<SetReportMovementType> list = getAndClearCachedMovementList();
+            for(SetReportMovementType entry : list) {
+                exchangeService.sendMovementReportToExchange(entry, "system");
+            }
         }
     }
 
