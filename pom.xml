@@ -19,7 +19,7 @@
         <joda-time.version>2.9.9</joda-time.version>
 
         <uvms.common.version>3.0.30</uvms.common.version>
-        <exchange.model.version>4.0.22</exchange.model.version>
+        <exchange.model.version>4.0.29</exchange.model.version>
 
         <javaee.version>8.0</javaee.version>
 

@@ -11,15 +11,21 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 
 /**
  **/
 public abstract class PluginDataHolder {
+
+    private Object lock = new Object();
 
     static final String PLUGIN_PROPERTIES = "naf.properties";
     static final String PROPERTIES = "settings.properties";
@@ -31,7 +37,7 @@ public abstract class PluginDataHolder {
 
     private final ConcurrentHashMap<String, String> settings = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> capabilities = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, SetReportMovementType> cachedMovement = new ConcurrentHashMap<>();
+    private final List<SetReportMovementType> failedSendList = new ArrayList<>();
 
     public ConcurrentMap<String, String> getSettings() {
         return settings;
@@ -41,9 +47,22 @@ public abstract class PluginDataHolder {
         return capabilities;
     }
 
-    public ConcurrentMap<String, SetReportMovementType> getCachedMovement() {
-        return cachedMovement;
+
+    public void addCachedMovement(SetReportMovementType setReportMovementType) {
+        synchronized(lock) {
+            failedSendList.add(setReportMovementType);
+        }
     }
+
+    public List<SetReportMovementType>  getAndClearCachedMovementList() {
+        List<SetReportMovementType>  tmp = new ArrayList<> ();
+        synchronized(lock) {
+            tmp.addAll(failedSendList);
+            failedSendList.clear();
+            return tmp;
+        }
+    }
+
 
     public Properties getPluginApplicaitonProperties() {
         return nafApplicaitonProperties;
