@@ -11,6 +11,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.service;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -25,6 +26,7 @@ import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jms.*;
 import java.util.Date;
 
@@ -34,6 +36,9 @@ import java.util.Date;
 public class ExchangeService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
+
+    @Inject
+    private StartupBean startupBean;
 
     @EJB
     private PluginToExchangeProducer producer;
@@ -63,6 +68,10 @@ public class ExchangeService {
             producer.sendModuleMessage(text, null);
         } catch (MessageException e) {
             LOG.error("Couldn't send NAF positionReport to exchange");
+            MovementBaseType tmp = reportType.getMovement();
+            if(tmp != null) {
+                startupBean.getCachedMovement().put(tmp.getMmsi(), tmp);
+            }
             sendToErrorQueue(text);
         }
     }

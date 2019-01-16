@@ -15,6 +15,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 
 /**
@@ -31,7 +32,7 @@ public abstract class PluginDataHolder {
 
     private final ConcurrentHashMap<String, String> settings = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> capabilities = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, SetReportMovementType> cachedMovement = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, MovementBaseType> cachedMovement = new ConcurrentHashMap<>();
 
     public ConcurrentMap<String, String> getSettings() {
         return settings;
@@ -41,7 +42,7 @@ public abstract class PluginDataHolder {
         return capabilities;
     }
 
-    public ConcurrentMap<String, SetReportMovementType> getCachedMovement() {
+    public ConcurrentMap<String, MovementBaseType> getCachedMovement() {
         return cachedMovement;
     }
 
