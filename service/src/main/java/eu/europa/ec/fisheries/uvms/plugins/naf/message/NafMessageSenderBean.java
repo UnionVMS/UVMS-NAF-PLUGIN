@@ -76,8 +76,13 @@ public class NafMessageSenderBean {
             String location = endpoint.replace("#MESSAGE#", URLEncoder.encode(message, CHARACTER_CODING) + "\n\r");
             
             URL url = new URL(location);
-            javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(new VMSHostNameVerifier());
-            javax.net.ssl.HttpsURLConnection urlc = (javax.net.ssl.HttpsURLConnection) url.openConnection();
+            HttpURLConnection urlc;
+            if (url.getProtocol().equals("http")) {
+                urlc = (HttpURLConnection) url.openConnection();
+            } else {
+                javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(new VMSHostNameVerifier());
+                urlc = (javax.net.ssl.HttpsURLConnection) url.openConnection();
+            }
             urlc.setConnectTimeout(connectTimeout);
             urlc.setReadTimeout(readTimeout);
             responseCode = urlc.getResponseCode();
@@ -87,6 +92,9 @@ public class NafMessageSenderBean {
         } catch (IOException ex) {
             LOG.error("No response from: {}", endpoint);
             throw new PluginException(ex.getMessage());
+        } catch (Exception e) {
+            LOG.error("Could not send message {} to endpoint {}", message, endpoint, e);
+            throw new PluginException(e.getMessage());
         }
         return responseCode;
     }

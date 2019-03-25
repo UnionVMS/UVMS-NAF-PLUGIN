@@ -65,9 +65,9 @@ public class NafServlet extends HttpServlet {
 
 
         LOG.info("[ NAF INPUT  ]: {}", message);
-        String authType = httpRequest.getAuthType();
-        String useLocalStore = startupBean.getSetting(NafConfigKeys.USE_LOCAL_STORE);
-        if ("false".equalsIgnoreCase(useLocalStore) || HttpServletRequest.CLIENT_CERT_AUTH.equals(authType)) {
+//        String authType = httpRequest.getAuthType();
+//        String useLocalStore = startupBean.getSetting(NafConfigKeys.USE_LOCAL_STORE);
+//        if ("false".equalsIgnoreCase(useLocalStore) || HttpServletRequest.CLIENT_CERT_AUTH.equals(authType)) {
             try {
                 pluginService.setMessageReceived(message);
                 long time = System.currentTimeMillis() - in;
@@ -77,10 +77,10 @@ public class NafServlet extends HttpServlet {
                 LOG.error("[ Exception while handling NAF request ] {}", e);
                 respond(response, 500, "NOK");
             }
-        } else {
-            LOG.error("[ Unauthorized NAF request ]");
-            respond(response, 401, "Unauthorized");
-        }
+//        } else {
+//            LOG.error("[ Unauthorized NAF request ]");
+//            respond(response, 401, "Unauthorized");
+//        }
 
     }
 
