@@ -11,28 +11,26 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.util;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-/**
- **/
 public class DateUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(DateUtil.class);
 
     private static final String DATE_TIME_FORMAT = "yyyyMMdd HHmm z";
 
-    private static Date parseToUTC(String format, String dateString) {
-    	DateTimeFormatter formatter = DateTimeFormat.forPattern(format);
-    	DateTime dateTime = formatter.withZoneUTC().parseDateTime(dateString);
-    	LOG.info("JodaTime: {}", dateTime);
-    	return dateTime.toLocalDateTime().toDate();
+    private DateUtil() {}
 
+    private static Date parseToUTC(String format, String dateString) {
+        Instant instant = ZonedDateTime.parse(dateString, DateTimeFormatter.ofPattern(format)).toInstant();
+        Date dateTime = Date.from(instant);
+        LOG.debug("DateTime: {}", dateTime);
+        return dateTime;
     }
     
     public static Date parseToUTCDateTime(String dateString) {
