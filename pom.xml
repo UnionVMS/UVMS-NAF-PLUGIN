@@ -5,7 +5,7 @@
 		<groupId>fish.focus.uvms.maven</groupId>
 		<artifactId>uvms-pom</artifactId>
 		<relativePath />
-		<version>1.21</version>
+		<version>1.24</version>
 	</parent>
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
@@ -16,7 +16,6 @@
     
     <properties>
         <swagger.version>1.3.1</swagger.version>
-        <joda-time.version>2.9.9</joda-time.version>
 
         <uvms.common.version>3.0.30</uvms.common.version>
         <exchange.model.version>4.0.29</exchange.model.version>

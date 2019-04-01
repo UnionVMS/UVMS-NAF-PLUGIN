@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -206,48 +207,48 @@ public class NafMessageResponseMapperTest {
     
     @Test
     public void testParseNormalNAFMessage() throws PluginException {
-    	String message = "//SR//FR/SWE//AD/UVM//TM/POS//RC/F1007//IR/SWE0000F1007//XR/EXT3//LT/57.037//LG/12.214//"
-    					+ "SP/50//CO/190//DA/20170817//TI/0500//NA/Ship1007//FS/SWE//ER//";
-    	SetReportMovementType setReportMovementType = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
-    	MovementBaseType movement = setReportMovementType.getMovement();
-    	assertEquals(MovementTypeType.POS, movement.getMovementType());
-    	assertEquals("F1007", movement.getIrcs());
-    	assertEquals("SWE0000F1007", movement.getInternalReferenceNumber());
-    	assertEquals("EXT3", movement.getExternalMarking());
-    	assertEquals(57.037d, movement.getPosition().getLatitude(), DELTA_VALUE);
-    	assertEquals(12.214d, movement.getPosition().getLongitude(), DELTA_VALUE);
-    	assertEquals(5d, movement.getReportedSpeed(), DELTA_VALUE);
-    	assertEquals(190d, movement.getReportedCourse(), DELTA_VALUE);
-    	Calendar c = Calendar.getInstance();
-    	c.set(2017, 7, 17, 5, 0, 0);
-    	c.set(Calendar.MILLISECOND, 0);
-    	Date expectedDate = c.getTime();
-    	assertEquals(expectedDate, movement.getPositionTime());
-    	assertEquals("Ship1007", movement.getAssetName());
-    	assertEquals("SWE", movement.getFlagState());
+        String message = "//SR//FR/SWE//AD/UVM//TM/POS//RC/F1007//IR/SWE0000F1007//XR/EXT3//LT/57.037//LG/12.214//"
+                + "SP/50//CO/190//DA/20170817//TI/0500//NA/Ship1007//FS/SWE//ER//";
+        SetReportMovementType setReportMovementType = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
+        MovementBaseType movement = setReportMovementType.getMovement();
+        assertEquals(MovementTypeType.POS, movement.getMovementType());
+        assertEquals("F1007", movement.getIrcs());
+        assertEquals("SWE0000F1007", movement.getInternalReferenceNumber());
+        assertEquals("EXT3", movement.getExternalMarking());
+        assertEquals(57.037d, movement.getPosition().getLatitude(), DELTA_VALUE);
+        assertEquals(12.214d, movement.getPosition().getLongitude(), DELTA_VALUE);
+        assertEquals(5d, movement.getReportedSpeed(), DELTA_VALUE);
+        assertEquals(190d, movement.getReportedCourse(), DELTA_VALUE);
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        c.set(2017, 7, 17, 5, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        Date expectedDate = c.getTime();
+        assertEquals(expectedDate, movement.getPositionTime());
+        assertEquals("Ship1007", movement.getAssetName());
+        assertEquals("SWE", movement.getFlagState());
     }
     
     @Test
     public void testParseNAFMessageWithEmptyIRCSValue() throws PluginException {
-    	String message = "//SR//FR/SWE//AD/UVM//TM/POS//RC///IR/SWE0000F1007//XR/EXT3//LT/57.037//LG/12.214//"
-    					+ "SP/50//CO/190//DA/20170817//TI/0500//NA/Ship1007//FS/SWE//ER//";
-    	SetReportMovementType setReportMovementType = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
-    	MovementBaseType movement = setReportMovementType.getMovement();
-    	assertEquals(MovementTypeType.POS, movement.getMovementType());
-    	assertTrue(StringUtils.isBlank(movement.getIrcs()));
-    	assertEquals("SWE0000F1007", movement.getInternalReferenceNumber());
-    	assertEquals("EXT3", movement.getExternalMarking());
-    	assertEquals(57.037d, movement.getPosition().getLatitude(), DELTA_VALUE);
-    	assertEquals(12.214d, movement.getPosition().getLongitude(), DELTA_VALUE);
-    	assertEquals(5d, movement.getReportedSpeed(), DELTA_VALUE);
-    	assertEquals(190d, movement.getReportedCourse(), DELTA_VALUE);
-    	Calendar c = Calendar.getInstance();
-    	c.set(2017, 7, 17, 5, 0, 0);
-    	c.set(Calendar.MILLISECOND, 0);
-    	Date expectedDate = c.getTime();
-    	assertEquals(expectedDate, movement.getPositionTime());
-    	assertEquals("Ship1007", movement.getAssetName());
-    	assertEquals("SWE", movement.getFlagState());
+        String message = "//SR//FR/SWE//AD/UVM//TM/POS//RC///IR/SWE0000F1007//XR/EXT3//LT/57.037//LG/12.214//"
+                + "SP/50//CO/190//DA/20170817//TI/0500//NA/Ship1007//FS/SWE//ER//";
+        SetReportMovementType setReportMovementType = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
+        MovementBaseType movement = setReportMovementType.getMovement();
+        assertEquals(MovementTypeType.POS, movement.getMovementType());
+        assertTrue(StringUtils.isBlank(movement.getIrcs()));
+        assertEquals("SWE0000F1007", movement.getInternalReferenceNumber());
+        assertEquals("EXT3", movement.getExternalMarking());
+        assertEquals(57.037d, movement.getPosition().getLatitude(), DELTA_VALUE);
+        assertEquals(12.214d, movement.getPosition().getLongitude(), DELTA_VALUE);
+        assertEquals(5d, movement.getReportedSpeed(), DELTA_VALUE);
+        assertEquals(190d, movement.getReportedCourse(), DELTA_VALUE);
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        c.set(2017, 7, 17, 5, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        Date expectedDate = c.getTime();
+        assertEquals(expectedDate, movement.getPositionTime());
+        assertEquals("Ship1007", movement.getAssetName());
+        assertEquals("SWE", movement.getFlagState());
     }
     
     @Test(expected = PluginException.class)

@@ -39,9 +39,15 @@ public class NafMessageRequestMapper {
         if (!appendAsset(naf, NafCode.RADIO_CALL_SIGN.getCode(), AssetIdType.IRCS, movement)) {
             append(naf, NafCode.RADIO_CALL_SIGN.getCode(), movement.getIrcs());
         }
-        append(naf, NafCode.TRIP_NUMBER.getCode(), movement.getTripNumber());
+        if (movement.getTripNumber() != null) {
+            append(naf, NafCode.TRIP_NUMBER.getCode(), movement.getTripNumber());
+        }
         append(naf, NafCode.VESSEL_NAME.getCode(), movement.getAssetName());
-        append(naf, NafCode.INTERNAL_REFERENCE_NUMBER.getCode(), movement.getInternalReferenceNumber());
+        if (movement.getInternalReferenceNumber() != null) {
+            append(naf, NafCode.INTERNAL_REFERENCE_NUMBER.getCode(), movement.getInternalReferenceNumber());
+        } else {
+            appendAsset(naf, NafCode.INTERNAL_REFERENCE_NUMBER.getCode(), AssetIdType.CFR, movement);
+        }
         append(naf, NafCode.EXTERNAL_MARK.getCode(), movement.getExternalMarking());
         appendPosition(naf, movement);
         if (movement.getReportedSpeed() != null) {
