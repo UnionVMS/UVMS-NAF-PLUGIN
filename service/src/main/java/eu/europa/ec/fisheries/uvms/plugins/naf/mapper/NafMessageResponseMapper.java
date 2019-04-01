@@ -121,7 +121,7 @@ public class NafMessageResponseMapper {
 			movement.setFlagState(value);
 			break;
 		case TYPE_OF_MESSAGE:
-			movement.setMovementType(MovementTypeType.valueOf(value));
+		    mapTypeOfMessage(movement, value);
 			break;
 		case TO:
 		default:
@@ -235,5 +235,12 @@ public class NafMessageResponseMapper {
     private static double charToDouble(char val) {
         String str = Character.toString(val);
         return Double.valueOf(str);
+    }
+
+    private static void mapTypeOfMessage(MovementBaseType movement, String value) {
+        if (value.length() > 3) {
+            value = value.substring(0, 3);
+        }
+        movement.setMovementType(MovementTypeType.valueOf(value));
     }
 }
