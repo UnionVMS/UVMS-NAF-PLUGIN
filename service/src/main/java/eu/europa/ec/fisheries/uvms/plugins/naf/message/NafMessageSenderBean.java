@@ -101,7 +101,7 @@ public class NafMessageSenderBean {
 
     String extractEndpoint(List<RecipientInfoType> recepientInfo) {
         for (RecipientInfoType info : recepientInfo) {
-            if (info.getKey() != null && info.getKey().startsWith("NAF.")) {
+            if (info.getValue() != null) {
                 return info.getValue();
             }
         }
