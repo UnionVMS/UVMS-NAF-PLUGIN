@@ -118,17 +118,46 @@ public class NafMessageResponseMapperTest {
         NafMessageResponseMapper.mapEntry(NafCode.LATITUDE, latS, movement);
         assertEquals(-12.2167D, movement.getPosition().getLatitude().doubleValue(), DELTA_VALUE);
 
-        String lonN = "E1417";
+        String lonN = "E01417";
         NafMessageResponseMapper.mapEntry(NafCode.LONGITUDE, lonN, movement);
         assertEquals(14.2833D, movement.getPosition().getLongitude().doubleValue(), DELTA_VALUE);
 
-        String lonS = "W1417";
+        String lonS = "W01417";
         NafMessageResponseMapper.mapEntry(NafCode.LONGITUDE, lonS, movement);
         assertEquals(-14.2833D, movement.getPosition().getLongitude().doubleValue(), DELTA_VALUE);
 
         String callSign = "SMIT";
         NafMessageResponseMapper.mapEntry(NafCode.RADIO_CALL_SIGN, callSign, movement);
         assertEquals("SMIT", movement.getAssetId().getAssetIdList().get(0).getValue());
+    }
+
+    @Test
+    public void mapDegreeLatLongTest() {
+        MovementBaseType movement = new MovementBaseType();
+
+        String latN = "N1213";
+        NafMessageResponseMapper.mapEntry(NafCode.LATITUDE, latN, movement);
+        assertEquals(12.2167D, movement.getPosition().getLatitude().doubleValue(), DELTA_VALUE);
+
+        String latS = "S1213";
+        NafMessageResponseMapper.mapEntry(NafCode.LATITUDE, latS, movement);
+        assertEquals(-12.2167D, movement.getPosition().getLatitude().doubleValue(), DELTA_VALUE);
+
+        String lonE = "E01417";
+        NafMessageResponseMapper.mapEntry(NafCode.LONGITUDE, lonE, movement);
+        assertEquals(14.2833D, movement.getPosition().getLongitude().doubleValue(), DELTA_VALUE);
+
+        String lonW = "W01417";
+        NafMessageResponseMapper.mapEntry(NafCode.LONGITUDE, lonW, movement);
+        assertEquals(-14.2833D, movement.getPosition().getLongitude().doubleValue(), DELTA_VALUE);
+
+        String lon2E = "E14117";
+        NafMessageResponseMapper.mapEntry(NafCode.LONGITUDE, lon2E, movement);
+        assertEquals(141.2833D, movement.getPosition().getLongitude().doubleValue(), DELTA_VALUE);
+
+        String lon2W = "W14117";
+        NafMessageResponseMapper.mapEntry(NafCode.LONGITUDE, lon2W, movement);
+        assertEquals(-141.2833D, movement.getPosition().getLongitude().doubleValue(), DELTA_VALUE);
     }
 
     @Test

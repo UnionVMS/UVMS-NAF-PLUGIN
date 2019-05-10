@@ -95,12 +95,16 @@ public class NafMessageResponseMapper {
 			movement.setExternalMarking(value);
 			break;
 		case LATITUDE:
+		    mapLatitude(movement, value);
+		    break;
 		case LATITUDE_DECIMAL:
-			mapLatitude(movement, value, code);
+			mapDecimalLatitude(movement, value);
 			break;
 		case LONGITUDE:
+		    mapLongitude(movement, value);
+		    break;
 		case LONGITUDE_DECIMAL:
-			mapLongitude(movement, value, code);
+			mapDecimalLongitude(movement, value);
 			break;
 		case SPEED:
 			mapSpeed(movement, value);
@@ -189,48 +193,46 @@ public class NafMessageResponseMapper {
     }
 
     static MovementPoint getMovementPoint(MovementBaseType movement) {
-        MovementPoint pos = movement.getPosition();
-        if (pos == null) {
-            pos = new MovementPoint();
+        if (movement.getPosition() == null) {
+            movement.setPosition(new MovementPoint());
         }
-        return pos;
+        return movement.getPosition();
     }
 
-    private static void mapLongitude(MovementBaseType movement, String value, NafCode key) {
+    private static void mapDecimalLongitude(MovementBaseType movement, String value) {
         MovementPoint pos = getMovementPoint(movement);
-        if (NafCode.LONGITUDE_DECIMAL.equals(key)) {
-            pos.setLongitude(Double.valueOf(value));
-        } else {
-            double decimalDegrees = positionStringToDecimalDegrees(value);
-            if (value.charAt(0) == 'W') {
-                decimalDegrees *= -1;
-            }
-            getMovementPoint(movement).setLongitude(decimalDegrees);
-        }
-        movement.setPosition(pos);
+        pos.setLongitude(Double.valueOf(value));
     }
 
-    private static void mapLatitude(MovementBaseType movement, String value, NafCode key) {
+    private static void mapDecimalLatitude(MovementBaseType movement, String value) {
         MovementPoint pos = getMovementPoint(movement);
-        if (NafCode.LATITUDE_DECIMAL.equals(key)) {
-            pos.setLatitude(Double.valueOf(value));
-        } else {
-            double decimalDegrees = positionStringToDecimalDegrees(value);
-            if (value.charAt(0) == 'S') {
-                decimalDegrees *= -1;
-            }
-            pos.setLatitude(decimalDegrees);
-        }
-        movement.setPosition(pos);
+        pos.setLatitude(Double.valueOf(value));
     }
 
-    private static double positionStringToDecimalDegrees(String value) {
+    private static void mapLongitude(MovementBaseType movement, String value) {
+        MovementPoint pos = getMovementPoint(movement);
+        double deg = (charToDouble(value.charAt(1)) * 100) + (charToDouble(value.charAt(2)) * 10) + charToDouble(value.charAt(3));
+        double min = (charToDouble(value.charAt(4)) * 10) + charToDouble(value.charAt(5));
+        double decimalDegrees = deg + (min / 60);
+        BigDecimal bd = BigDecimal.valueOf(decimalDegrees).setScale(4, RoundingMode.HALF_EVEN);
+        decimalDegrees = bd.doubleValue();
+        if (value.charAt(0) == 'W') {
+            decimalDegrees *= -1;
+        }
+        pos.setLongitude(decimalDegrees);
+    }
+
+    private static void mapLatitude(MovementBaseType movement, String value) {
+        MovementPoint pos = getMovementPoint(movement);
         double deg = (charToDouble(value.charAt(1)) * 10) + charToDouble(value.charAt(2));
         double min = (charToDouble(value.charAt(3)) * 10) + charToDouble(value.charAt(4));
         double decimalDegrees = deg + (min / 60);
         BigDecimal bd = BigDecimal.valueOf(decimalDegrees).setScale(4, RoundingMode.HALF_EVEN);
         decimalDegrees = bd.doubleValue();
-        return decimalDegrees;
+        if (value.charAt(0) == 'S') {
+            decimalDegrees *= -1;
+        }
+        pos.setLatitude(decimalDegrees);
     }
     
     private static double charToDouble(char val) {
