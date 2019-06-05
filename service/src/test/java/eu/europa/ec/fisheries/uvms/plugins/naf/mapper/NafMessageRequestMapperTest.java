@@ -146,10 +146,22 @@ public class NafMessageRequestMapperTest {
     @Test
     public void getLongitudeStringTest() {
         String lonE = NafMessageRequestMapper.getLongitudeString(12.93);
-        String targetE = "E1255";
+        String targetE = "E01255";
         
         String lonW = NafMessageRequestMapper.getLongitudeString(-12.93);
-        String targetW = "W1255";
+        String targetW = "W01255";
+        
+        Assert.assertEquals(targetE, lonE);
+        Assert.assertEquals(targetW, lonW);
+    }
+    
+    @Test
+    public void getLongitudeStringTest2() {
+        String lonE = NafMessageRequestMapper.getLongitudeString(112.93);
+        String targetE = "E11255";
+        
+        String lonW = NafMessageRequestMapper.getLongitudeString(-112.93);
+        String targetW = "W11255";
         
         Assert.assertEquals(targetE, lonE);
         Assert.assertEquals(targetW, lonW);

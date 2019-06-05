@@ -71,7 +71,7 @@ public class PluginService {
                 String nafMessage = NafMessageRequestMapper.mapToVMSMessage(report);
                 try {
                     int response = sender.sendMessage(nafMessage, report.getRecipientInfo());
-                    if (response == -1) {
+                    if (response != 200) {
                         return AcknowledgeTypeType.NOK;
                     }
                 } catch (PluginException e) {
