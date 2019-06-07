@@ -13,7 +13,9 @@ package eu.europa.ec.fisheries.uvms.plugins.naf.service;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
+import javax.inject.Inject;
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,14 @@ public class PluginService {
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
 
+    @Inject
+    @Metric
+    Counter nafIncoming;
+
+    @Inject
+    @Metric
+    Counter nafOutgoing;
+
     /**
      *
      * @param reportRequest
@@ -79,6 +89,7 @@ public class PluginService {
                 }
             }
         }
+        nafOutgoing.inc();
         return AcknowledgeTypeType.OK;
     }
 
@@ -87,6 +98,7 @@ public class PluginService {
             SetReportMovementType movement = NafMessageResponseMapper.mapToMovementType(message, startupBean.getRegisterClassName());
             LOG.info("[ Asynchronous call to sendMovementReportToExchange() ]");
             exchangeService.sendMovementReportToExchange(movement, "NAF");
+            nafIncoming.inc();
             LOG.info("[ Returning ]");
         }
     }
