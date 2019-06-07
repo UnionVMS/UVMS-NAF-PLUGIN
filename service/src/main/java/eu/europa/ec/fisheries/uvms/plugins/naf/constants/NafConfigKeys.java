@@ -20,7 +20,7 @@ public class NafConfigKeys {
     public static final String TRUSTSTORE_PSW = "truststore.psw";
     public static final String CONNECT_TIMEOUT = "connectTimeout";
     public static final String READ_TIMEOUT = "readTimeout";
-    public static final String USE_LOCAL_STORE = "localStores";
+    public static final String USE_PROXY = "useProxy";
     public static final String PROXY = "proxy";
     public static final String PROXY_PORT = "proxyPort";
 }

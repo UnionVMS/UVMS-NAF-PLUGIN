@@ -58,11 +58,11 @@ public class NafMessageSenderBean {
             readTimeout = Integer.valueOf(readTimeoutString);
         }
         
-        String useLocalStores = startupBean.getSetting(NafConfigKeys.USE_LOCAL_STORE);
-        if (useLocalStores != null && "true".equalsIgnoreCase(useLocalStores)) {
-            return sendUsingLocalStore(message, recepientInfo);
-        } else {
+        String useProxy = startupBean.getSetting(NafConfigKeys.USE_PROXY);
+        if (useProxy != null && "true".equalsIgnoreCase(useProxy)) {
             return sendUsingProxy(message, recepientInfo);
+        } else {
+            return sendUsingLocalStore(message, recepientInfo);
         }
     }
 
