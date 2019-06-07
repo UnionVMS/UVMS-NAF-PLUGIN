@@ -55,11 +55,11 @@ public class PluginService {
     private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
 
     @Inject
-    @Metric(name = "naf_incoming")
+    @Metric(name = "naf_incoming", absolute = true)
     Counter nafIncoming;
 
     @Inject
-    @Metric(name = "naf_outgoing")
+    @Metric(name = "naf_outgoing", absolute = true)
     Counter nafOutgoing;
 
     /**
