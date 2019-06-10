@@ -25,7 +25,9 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
@@ -56,11 +58,11 @@ public class NafMessageSenderBean {
             readTimeout = Integer.valueOf(readTimeoutString);
         }
         
-        String useLocalStores = startupBean.getSetting(NafConfigKeys.USE_LOCAL_STORE);
-        if (useLocalStores != null && "true".equalsIgnoreCase(useLocalStores)) {
-            return sendUsingLocalStore(message, recepientInfo);
-        } else {
+        String useProxy = startupBean.getSetting(NafConfigKeys.USE_PROXY);
+        if (useProxy != null && "true".equalsIgnoreCase(useProxy)) {
             return sendUsingProxy(message, recepientInfo);
+        } else {
+            return sendUsingLocalStore(message, recepientInfo);
         }
     }
 
@@ -112,15 +114,17 @@ public class NafMessageSenderBean {
         int responseCode = -1;
         
         String proxy = startupBean.getSetting(NafConfigKeys.PROXY);
+        String proxyPort = startupBean.getSetting(NafConfigKeys.PROXY_PORT);
         String endpoint = extractEndpoint(recepientInfo);
         if (endpoint == null || endpoint.isEmpty()) {
             return responseCode;
         }
         
         try {
-            String proxyUrl = proxy.concat("?target=").concat(URLEncoder.encode(endpoint.replace("#MESSAGE#", message), CHARACTER_CODING));
-            URL url = new URL(proxyUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            Proxy httpProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy, Integer.parseInt(proxyPort)));
+            String location = endpoint.replace("#MESSAGE#", URLEncoder.encode(message, CHARACTER_CODING) + "\n\r");
+            URL url = new URL(location);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection(httpProxy);
             connection.setRequestMethod("GET");
             connection.setReadTimeout(readTimeout);
             connection.setConnectTimeout(connectTimeout);

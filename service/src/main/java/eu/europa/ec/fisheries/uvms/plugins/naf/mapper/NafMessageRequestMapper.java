@@ -184,6 +184,9 @@ public class NafMessageRequestMapper {
         int deg = (int) Math.floor(longitude);
         int min = (int)((longitude - deg) * 60);
         
+        if (deg < 100) {
+            sb.append(0);
+        }
         sb.append(deg);
         sb.append(min);
         return sb.toString();
