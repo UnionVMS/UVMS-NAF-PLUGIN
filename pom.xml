@@ -10,7 +10,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.plugins</groupId>
     <artifactId>naf</artifactId>
-    <version>3.0.18-SNAPSHOT</version>
+    <version>3.0.18</version>
     <packaging>pom</packaging>
     <description>Plugin template</description>
     
@@ -69,7 +69,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/UnionVMS/UVMS-NAF-PLUGIN.git</connection>
-      <tag>naf-3.0.14</tag>
+      <tag>naf-3.0.18</tag>
   </scm>
         
   <modules>
