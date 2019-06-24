@@ -13,7 +13,6 @@
 package eu.europa.ec.fisheries.uvms.plugins.naf.rest.service;
 
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
-import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafConfigKeys;
 import eu.europa.ec.fisheries.uvms.plugins.naf.service.PluginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

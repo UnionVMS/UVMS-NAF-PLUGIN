@@ -88,8 +88,8 @@ public class PluginService {
                     return AcknowledgeTypeType.NOK;
                 }
             }
+            nafOutgoing.inc();
         }
-        nafOutgoing.inc();
         return AcknowledgeTypeType.OK;
     }
 

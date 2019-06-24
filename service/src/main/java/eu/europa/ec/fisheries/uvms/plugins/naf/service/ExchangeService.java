@@ -15,9 +15,9 @@ import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
+import eu.europa.ec.fisheries.uvms.plugins.naf.producer.FailedReportsProducer;
 import eu.europa.ec.fisheries.uvms.plugins.naf.producer.PluginToExchangeProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jms.*;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  **/
@@ -42,13 +44,9 @@ public class ExchangeService {
 
     @EJB
     private PluginToExchangeProducer producer;
-
-
-    @Resource(mappedName = "java:/ConnectionFactory")
-    private ConnectionFactory connectionFactory;
-    @Resource(mappedName = "java:/jms/queue/UVMSPluginFailedReport")
-    private Queue errorQueue;
-
+    
+    @Inject
+    private FailedReportsProducer failedReportsProducer;
 
     @Asynchronous
     public void sendMovementReportToExchange(SetReportMovementType reportType, String userName) {
@@ -66,7 +64,7 @@ public class ExchangeService {
 
         try {
             producer.sendMessageToSpecificQueueWithFunction(text, producer.getDestination(), null, ExchangeModuleMethod.SET_MOVEMENT_REPORT.value(), null);
-        } catch (MessageException e) {
+        } catch (JMSException e) {
             LOG.error("Couldn't send NAF positionReport to exchange. Trying again later");
             MovementBaseType tmp = reportType.getMovement();
             if(tmp != null) {
@@ -77,25 +75,12 @@ public class ExchangeService {
     }
 
     private void sendToErrorQueue(String movement) {
-        try (
-                Connection connection = connectionFactory.createConnection();
-                Session session = connection.createSession(false, 1);
-                MessageProducer producer = session.createProducer(errorQueue)
-        ) {
-            producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-
-            // emit
-
-            try {
-                TextMessage message = session.createTextMessage();
-                message.setStringProperty("source", "NAF");
-                message.setText(movement);
-                producer.send(message);
-            } catch (Exception e) {
-                LOG.info("//NOP: {}", e.getLocalizedMessage());
-            }
+        try {
+            Map<String, String> props = new HashMap<>();
+            props.put("source", "NAF");
+            failedReportsProducer.sendModuleMessageWithProps(movement, null, props);
         } catch (JMSException e) {
-            LOG.error("couldn't send movement");
+            LOG.error("Couldn't send to error queue");
         }
     }
 }
