@@ -33,6 +33,7 @@ import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PollType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetReportRequest;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
+import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafConfigKeys;
 import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
 import eu.europa.ec.fisheries.uvms.plugins.naf.mapper.NafMessageRequestMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.mapper.NafMessageResponseMapper;
@@ -77,8 +78,8 @@ public class PluginService {
             if (pos != null) {
                 LOG.info("lon: " + pos.getLongitude());
                 LOG.info("lat: " + pos.getLatitude());
-                
-                String nafMessage = NafMessageRequestMapper.mapToVMSMessage(report);
+                String from = startupBean.getSetting(NafConfigKeys.FROM_PARTY);
+                String nafMessage = NafMessageRequestMapper.mapToVMSMessage(report, from);
                 try {
                     int response = sender.sendMessage(nafMessage, report.getRecipientInfo());
                     if (response != 200) {

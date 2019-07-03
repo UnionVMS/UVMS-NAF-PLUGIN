@@ -23,4 +23,5 @@ public class NafConfigKeys {
     public static final String USE_PROXY = "useProxy";
     public static final String PROXY = "proxy";
     public static final String PROXY_PORT = "proxyPort";
+    public static final String FROM_PARTY = "fromParty";
 }
