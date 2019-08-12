@@ -27,7 +27,7 @@ public class NafMessageRequestMapper {
 	
 	private NafMessageRequestMapper() {}
     
-    public static String mapToVMSMessage(ReportType report) {
+    public static String mapToVMSMessage(ReportType report, String from) {
         MovementType movement = report.getMovement();
         StringBuilder naf = new StringBuilder();
         
@@ -35,6 +35,7 @@ public class NafMessageRequestMapper {
         
         // Actual data
         append(naf, NafCode.TO.getCode(), report.getRecipient());
+        append(naf, NafCode.FROM.getCode(), from);
         append(naf, NafCode.TYPE_OF_MESSAGE.getCode(), movement.getMovementType().name());
         if (!appendAsset(naf, NafCode.RADIO_CALL_SIGN.getCode(), AssetIdType.IRCS, movement)) {
             append(naf, NafCode.RADIO_CALL_SIGN.getCode(), movement.getIrcs());

@@ -70,7 +70,7 @@ public class NafMessageRequestMapperTest {
         
         movement.setMovementType(MovementTypeType.POS);
         
-        String targetNaf = "//SR//AD/SWE//TM/POS//RC/IRCS//TN/12//NA/Sven";
+        String targetNaf = "//SR//AD/SWE//FR/UNK//TM/POS//RC/IRCS//TN/12//NA/Sven";
         targetNaf       += "//IR/SWE123//XR/EXT//LT/10.7//LG/11.3//SP/73//CO/123";
         
         String month = (greg.getMonth() < 10) ? "0" + greg.getMonth() : "" + greg.getMonth();
@@ -90,7 +90,7 @@ public class NafMessageRequestMapperTest {
         info.setValue("https://localhost/#MESSAGE#");
         report.getRecipientInfo().add(info);
         report.setMovement(movement);
-        String naf = NafMessageRequestMapper.mapToVMSMessage(report);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
         
         Assert.assertEquals(targetNaf, naf);
     }
