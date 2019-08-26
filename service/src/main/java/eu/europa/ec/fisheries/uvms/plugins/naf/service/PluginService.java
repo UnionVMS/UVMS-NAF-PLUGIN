@@ -97,6 +97,7 @@ public class PluginService {
     public void setMessageReceived(String message) throws PluginException {
         if (message != null) {
             SetReportMovementType movement = NafMessageResponseMapper.mapToMovementType(message, startupBean.getRegisterClassName());
+            movement.setOriginalIncomingMessage(message);
             LOG.info("[ Asynchronous call to sendMovementReportToExchange() ]");
             exchangeService.sendMovementReportToExchange(movement, "NAF");
             nafIncoming.inc();
