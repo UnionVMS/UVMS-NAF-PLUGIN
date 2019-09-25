@@ -65,12 +65,13 @@ public class NafMessageRequestMapperTest {
         assetId.getAssetIdList().add(imo);
         movement.setAssetId(assetId);
         movement.setAssetName("Sven");
+        movement.setFlagState("SWE");
         movement.setTripNumber(12d);
         movement.setInternalReferenceNumber("SWE123");
         
         movement.setMovementType(MovementTypeType.POS);
         
-        String targetNaf = "//SR//AD/SWE//FR/UNK//TM/POS//RC/IRCS//TN/12//NA/Sven";
+        String targetNaf = "//SR//AD/SWE//FR/UNK//TM/POS//RC/IRCS//TN/12//NA/Sven//FS/SWE";
         targetNaf       += "//IR/SWE123//XR/EXT//LT/10.7//LG/11.3//SP/73//CO/123";
         
         String month = (greg.getMonth() < 10) ? "0" + greg.getMonth() : "" + greg.getMonth();
@@ -187,4 +188,5 @@ public class NafMessageRequestMapperTest {
         
         Assert.assertEquals(target, naf.toString());
     }
+ 
 }

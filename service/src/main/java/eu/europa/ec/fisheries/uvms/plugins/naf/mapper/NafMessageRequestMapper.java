@@ -44,6 +44,7 @@ public class NafMessageRequestMapper {
             append(naf, NafCode.TRIP_NUMBER.getCode(), movement.getTripNumber());
         }
         append(naf, NafCode.VESSEL_NAME.getCode(), movement.getAssetName());
+        append(naf, NafCode.FLAG.getCode(), movement.getFlagState() );
         if (movement.getInternalReferenceNumber() != null) {
             append(naf, NafCode.INTERNAL_REFERENCE_NUMBER.getCode(), movement.getInternalReferenceNumber());
         } else {
