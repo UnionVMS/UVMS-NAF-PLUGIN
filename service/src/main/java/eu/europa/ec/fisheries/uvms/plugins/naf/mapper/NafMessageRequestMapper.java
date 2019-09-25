@@ -64,8 +64,6 @@ public class NafMessageRequestMapper {
             append(naf, NafCode.ACTIVITY.getCode(), movement.getActivity().getMessageType().value());
         }
         
-      // 
-        
         appendEndRecord(naf);
         
         return naf.toString();
