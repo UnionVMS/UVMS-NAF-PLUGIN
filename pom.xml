@@ -20,7 +20,7 @@
         <uvms.common.version>4.0.5</uvms.common.version>
         <exchange.model.version>5.0.12-UVMS</exchange.model.version>
 
-        <javaee.version>8.0</javaee.version>
+        <javaee.version>8.0.1</javaee.version>
 
         <project.scm.id>github</project.scm.id>
         <copy.ear.target>C:\dev\WebLogic\domain1213\servers\AdminServer\upload</copy.ear.target>
