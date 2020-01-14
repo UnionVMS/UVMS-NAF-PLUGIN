@@ -70,22 +70,23 @@ public class PluginService {
      */
     public AcknowledgeTypeType setReport(SetReportRequest reportRequest) {
         ReportType report = reportRequest.getReport();
-        LOG.info(startupBean.getRegisterClassName() + ".report(" + report.getType().name() + ")");
+        LOG.debug(startupBean.getRegisterClassName() + ".report(" + report.getType().name() + ")");
         LOG.debug("timestamp: " + report.getTimestamp());
         MovementType movement = report.getMovement();
         if (movement != null && ReportTypeType.MOVEMENT.equals(report.getType())) {
             MovementPoint pos = movement.getPosition();
             if (pos != null) {
-                LOG.info("lon: " + pos.getLongitude());
-                LOG.info("lat: " + pos.getLatitude());
                 String from = startupBean.getSetting(NafConfigKeys.FROM_PARTY);
                 String nafMessage = NafMessageRequestMapper.mapToVMSMessage(report, from);
+                LOG.info("Sending {}", nafMessage);
                 try {
                     int response = sender.sendMessage(nafMessage, report.getRecipientInfo());
                     if (response != 200) {
+                        LOG.error("Received error code {} when sending to {}", response, report.getRecipient());
                         return AcknowledgeTypeType.NOK;
                     }
                 } catch (PluginException e) {
+                    LOG.error("Could not send message due to: {}", e.getMessage());
                     return AcknowledgeTypeType.NOK;
                 }
             }
@@ -98,10 +99,8 @@ public class PluginService {
         if (message != null) {
             SetReportMovementType movement = NafMessageResponseMapper.mapToMovementType(message, startupBean.getRegisterClassName());
             movement.setOriginalIncomingMessage(message);
-            LOG.info("[ Asynchronous call to sendMovementReportToExchange() ]");
             exchangeService.sendMovementReportToExchange(movement, "NAF");
             nafIncoming.inc();
-            LOG.info("[ Returning ]");
         }
     }
 
