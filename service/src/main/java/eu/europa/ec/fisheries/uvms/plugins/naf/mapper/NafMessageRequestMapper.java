@@ -147,10 +147,12 @@ public class NafMessageRequestMapper {
     }
     
     static void append(StringBuilder naf, String key, String value) {
-        naf.append(key);
-        naf.append(NafCode.SUBDELIMITER);
-        naf.append(value);
-        naf.append(NafCode.DELIMITER);
+        if (value != null) {
+            naf.append(key);
+            naf.append(NafCode.SUBDELIMITER);
+            naf.append(value);
+            naf.append(NafCode.DELIMITER);
+        }
     }
 
     static String getLatitudeString(Double coord) {

@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
+import static org.junit.Assert.assertFalse;
 import java.util.Date;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.junit.Assert;
@@ -187,6 +188,23 @@ public class NafMessageRequestMapperTest {
         String target = "RC/IRCS//";
         
         Assert.assertEquals(target, naf.toString());
+    }
+
+    @Test
+    public void appendNullAttributeTest() {
+        ReportType report = new ReportType();
+        MovementType movement = new MovementType();
+        movement.setMovementType(MovementTypeType.POS);
+        movement.setReportedCourse(123d);
+        MovementPoint position = new MovementPoint();
+        position.setLatitude(1d);
+        position.setLongitude(1d);
+        movement.setPosition(position);
+        movement.setPositionTime(new Date());
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+
+        assertFalse(NafCode.EXTERNAL_MARK.matches(naf));
     }
  
 }
