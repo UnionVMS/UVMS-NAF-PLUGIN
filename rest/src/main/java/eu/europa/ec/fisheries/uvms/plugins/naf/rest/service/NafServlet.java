@@ -84,7 +84,9 @@ public class NafServlet extends HttpServlet {
     }
 
     private void respond(HttpServletResponse response, int status, String returnValue) throws IOException {
-        LOG.debug("Response status: {}", status);
+        if (status != 200) {
+            LOG.warn("Response status: {}", status);
+        }
         response.setStatus(status);
         PrintWriter out = response.getWriter();
         out.println(returnValue);
