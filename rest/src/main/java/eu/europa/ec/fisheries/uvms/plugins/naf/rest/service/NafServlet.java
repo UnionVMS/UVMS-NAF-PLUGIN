@@ -63,7 +63,7 @@ public class NafServlet extends HttpServlet {
         message = new String(message.getBytes("ISO-8859-1"), "UTF-8");
 
 
-        LOG.info("[ NAF INPUT  ]: {}", message);
+        LOG.info("Input: {}", message);
 //        String authType = httpRequest.getAuthType();
 //        String useLocalStore = startupBean.getSetting(NafConfigKeys.USE_LOCAL_STORE);
 //        if ("false".equalsIgnoreCase(useLocalStore) || HttpServletRequest.CLIENT_CERT_AUTH.equals(authType)) {
@@ -84,7 +84,7 @@ public class NafServlet extends HttpServlet {
     }
 
     private void respond(HttpServletResponse response, int status, String returnValue) throws IOException {
-        LOG.info("Response status: {}", status);
+        LOG.debug("Response status: {}", status);
         response.setStatus(status);
         PrintWriter out = response.getWriter();
         out.println(returnValue);
