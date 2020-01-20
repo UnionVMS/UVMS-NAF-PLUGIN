@@ -11,15 +11,18 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.mapper;
 
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.ReportType;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementPoint;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  **/
@@ -27,6 +30,20 @@ public class NafMessageRequestMapper {
 	
 	private NafMessageRequestMapper() {}
     
+    private static final NumberFormat latFormatter;
+    private static final NumberFormat longFormatter;
+
+    static {
+        latFormatter = NumberFormat.getInstance(Locale.ENGLISH);
+        latFormatter.setRoundingMode(RoundingMode.HALF_UP);
+        latFormatter.setMaximumFractionDigits(3);
+        latFormatter.setMinimumIntegerDigits(2);
+        longFormatter = NumberFormat.getInstance(Locale.ENGLISH);
+        longFormatter.setRoundingMode(RoundingMode.HALF_UP);
+        longFormatter.setMaximumFractionDigits(3);
+        longFormatter.setMinimumIntegerDigits(3);
+    }
+
     public static String mapToVMSMessage(ReportType report, String from) {
         MovementType movement = report.getMovement();
         StringBuilder naf = new StringBuilder();
@@ -81,12 +98,13 @@ public class NafMessageRequestMapper {
     }
 
     private static void appendPosition(StringBuilder naf, MovementType movement) {
+        MovementPoint position = movement.getPosition();
         if (MovementSourceType.MANUAL.equals(movement.getSource())) {
-            append(naf, NafCode.LATITUDE.getCode(), getLatitudeString(movement.getPosition().getLatitude()));
-            append(naf, NafCode.LONGITUDE.getCode(), getLongitudeString(movement.getPosition().getLongitude()));
+            append(naf, NafCode.LATITUDE.getCode(), getLatitudeString(position.getLatitude()));
+            append(naf, NafCode.LONGITUDE.getCode(), getLongitudeString(position.getLongitude()));
         } else {
-            append(naf, NafCode.LATITUDE_DECIMAL.getCode(), movement.getPosition().getLatitude());
-            append(naf, NafCode.LONGITUDE_DECIMAL.getCode(), movement.getPosition().getLongitude());
+            append(naf, NafCode.LATITUDE_DECIMAL.getCode(), latFormatter.format(position.getLatitude()));
+            append(naf, NafCode.LONGITUDE_DECIMAL.getCode(), longFormatter.format(position.getLongitude()));
         }
     }
 

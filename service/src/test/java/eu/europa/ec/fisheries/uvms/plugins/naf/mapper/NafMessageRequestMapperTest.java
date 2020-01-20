@@ -11,6 +11,18 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.plugins.naf.mapper;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Date;
+import java.util.Locale;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Test;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.ReportType;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdList;
@@ -23,11 +35,6 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
-import static org.junit.Assert.assertFalse;
-import java.util.Date;
-import javax.xml.datatype.XMLGregorianCalendar;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  **/
@@ -73,7 +80,7 @@ public class NafMessageRequestMapperTest {
         movement.setMovementType(MovementTypeType.POS);
         
         String targetNaf = "//SR//AD/SWE//FR/UNK//TM/POS//RC/IRCS//TN/12//NA/Sven//FS/SWE";
-        targetNaf       += "//IR/SWE123//XR/EXT//LT/10.7//LG/11.3//SP/73//CO/123";
+        targetNaf       += "//IR/SWE123//XR/EXT//LT/10.7//LG/011.3//SP/73//CO/123";
         
         String month = (greg.getMonth() < 10) ? "0" + greg.getMonth() : "" + greg.getMonth();
         String day = (greg.getDay() < 10) ? "0" + greg.getDay() : "" + greg.getDay();
@@ -207,4 +214,174 @@ public class NafMessageRequestMapperTest {
         assertFalse(NafCode.EXTERNAL_MARK.matches(naf));
     }
  
+    @Test
+    public void appendDecimalLatitudeTest() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(10.1);
+        point.setLongitude(1.0);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LATITUDE_DECIMAL.getValue(naf), CoreMatchers.is("10.1"));
+    }
+    
+    @Test
+    public void appendDecimalLatitude2Test() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(1.1);
+        point.setLongitude(1.0);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LATITUDE_DECIMAL.getValue(naf), CoreMatchers.is("01.1"));
+    }
+    
+    @Test
+    public void appendPositiveDecimalLatitudeTest() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(10.123123);
+        point.setLongitude(1.0);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LATITUDE_DECIMAL.getValue(naf), CoreMatchers.is("10.123"));
+    }
+    
+    @Test
+    public void appendNegativeDecimalLatitudeTest() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(-10.123456);
+        point.setLongitude(1.0);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LATITUDE_DECIMAL.getValue(naf), CoreMatchers.is("-10.123"));
+    }
+    
+    @Test
+    public void appendDecimalLongitudeTest() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(1.1);
+        point.setLongitude(123.1);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LONGITUDE_DECIMAL.getValue(naf), CoreMatchers.is("123.1"));
+    }
+    
+    @Test
+    public void appendDecimalLongitude2Test() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(1.1);
+        point.setLongitude(12.123);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LONGITUDE_DECIMAL.getValue(naf), CoreMatchers.is("012.123"));
+    }
+    
+    @Test
+    public void appendPositiveDecimalLongitudeTest() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(1.0);
+        point.setLongitude(123.45678);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LONGITUDE_DECIMAL.getValue(naf), CoreMatchers.is("123.457"));
+    }
+    
+    @Test
+    public void appendNegativeDecimalLongitudeTest() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(1.0);
+        point.setLongitude(-123.45678);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LONGITUDE_DECIMAL.getValue(naf), CoreMatchers.is("-123.457"));
+    }
+    
+    @Test
+    public void appendNegativeDecimalLongitude2Test() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+        
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(1.0);
+        point.setLongitude(-12.34567);
+        movement.setPosition(point);
+        
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+        
+        assertThat(NafCode.LONGITUDE_DECIMAL.getValue(naf), CoreMatchers.is("-012.346"));
+    }
 }
