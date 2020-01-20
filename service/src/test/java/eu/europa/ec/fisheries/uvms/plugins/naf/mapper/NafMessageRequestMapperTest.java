@@ -13,12 +13,7 @@ package eu.europa.ec.fisheries.uvms.plugins.naf.mapper;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.Date;
-import java.util.Locale;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -80,7 +75,7 @@ public class NafMessageRequestMapperTest {
         movement.setMovementType(MovementTypeType.POS);
         
         String targetNaf = "//SR//AD/SWE//FR/UNK//TM/POS//RC/IRCS//TN/12//NA/Sven//FS/SWE";
-        targetNaf       += "//IR/SWE123//XR/EXT//LT/10.7//LG/011.3//SP/73//CO/123";
+        targetNaf       += "//IR/SWE123//XR/EXT//LT/10.700//LG/011.300//SP/73//CO/123";
         
         String month = (greg.getMonth() < 10) ? "0" + greg.getMonth() : "" + greg.getMonth();
         String day = (greg.getDay() < 10) ? "0" + greg.getDay() : "" + greg.getDay();
@@ -230,7 +225,7 @@ public class NafMessageRequestMapperTest {
         report.setMovement(movement);
         String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
         
-        assertThat(NafCode.LATITUDE_DECIMAL.getValue(naf), CoreMatchers.is("10.1"));
+        assertThat(NafCode.LATITUDE_DECIMAL.getValue(naf), CoreMatchers.is("10.100"));
     }
     
     @Test
@@ -249,7 +244,7 @@ public class NafMessageRequestMapperTest {
         report.setMovement(movement);
         String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
         
-        assertThat(NafCode.LATITUDE_DECIMAL.getValue(naf), CoreMatchers.is("01.1"));
+        assertThat(NafCode.LATITUDE_DECIMAL.getValue(naf), CoreMatchers.is("01.100"));
     }
     
     @Test
@@ -306,7 +301,7 @@ public class NafMessageRequestMapperTest {
         report.setMovement(movement);
         String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
         
-        assertThat(NafCode.LONGITUDE_DECIMAL.getValue(naf), CoreMatchers.is("123.1"));
+        assertThat(NafCode.LONGITUDE_DECIMAL.getValue(naf), CoreMatchers.is("123.100"));
     }
     
     @Test

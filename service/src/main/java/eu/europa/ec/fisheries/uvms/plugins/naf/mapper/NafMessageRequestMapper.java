@@ -36,10 +36,12 @@ public class NafMessageRequestMapper {
     static {
         latFormatter = NumberFormat.getInstance(Locale.ENGLISH);
         latFormatter.setRoundingMode(RoundingMode.HALF_UP);
+        latFormatter.setMinimumFractionDigits(3);
         latFormatter.setMaximumFractionDigits(3);
         latFormatter.setMinimumIntegerDigits(2);
         longFormatter = NumberFormat.getInstance(Locale.ENGLISH);
         longFormatter.setRoundingMode(RoundingMode.HALF_UP);
+        longFormatter.setMinimumFractionDigits(3);
         longFormatter.setMaximumFractionDigits(3);
         longFormatter.setMinimumIntegerDigits(3);
     }
