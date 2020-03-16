@@ -41,11 +41,7 @@
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>destination</activation-config-property-name>
-                    <activation-config-property-value>EventBus</activation-config-property-value>
-                </activation-config-property>
-                <activation-config-property>
-                    <activation-config-property-name>connectionFactoryJndiName</activation-config-property-name>
-                    <activation-config-property-value>${application.connection.factory}</activation-config-property-value>
+                    <activation-config-property-value>jms/topic/EventBus</activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>destinationType</activation-config-property-name>
@@ -77,11 +73,7 @@
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>destination</activation-config-property-name>
-                    <activation-config-property-value>EventBus</activation-config-property-value>
-                </activation-config-property>
-                <activation-config-property>
-                    <activation-config-property-name>connectionFactoryJndiName</activation-config-property-name>
-                    <activation-config-property-value>${application.connection.factory}</activation-config-property-value>
+                    <activation-config-property-value>jms/topic/EventBus</activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>destinationType</activation-config-property-name>
