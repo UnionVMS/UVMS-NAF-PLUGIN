@@ -22,6 +22,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementPoint;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
 
 /**
@@ -70,12 +71,14 @@ public class NafMessageRequestMapper {
             appendAsset(naf, NafCode.INTERNAL_REFERENCE_NUMBER.getCode(), AssetIdType.CFR, movement);
         }
         append(naf, NafCode.EXTERNAL_MARK.getCode(), movement.getExternalMarking());
-        appendPosition(naf, movement);
-        if (movement.getReportedSpeed() != null) {
-            append(naf, NafCode.SPEED.getCode(), (int) (movement.getReportedSpeed() * 10));
-        }
-        if (movement.getReportedCourse() != null) {
-            append(naf, NafCode.COURSE.getCode(), movement.getReportedCourse().intValue());
+        if (!movement.getMovementType().equals(MovementTypeType.EXI)) {
+            appendPosition(naf, movement);
+            if (movement.getReportedSpeed() != null) {
+                append(naf, NafCode.SPEED.getCode(), (int) (movement.getReportedSpeed() * 10));
+            }
+            if (movement.getReportedCourse() != null) {
+                append(naf, NafCode.COURSE.getCode(), movement.getReportedCourse().intValue());
+            }
         }
         append(naf, NafCode.DATE.getCode(), getDateString(movement));
         append(naf, NafCode.TIME.getCode(), getTimeString(movement));
