@@ -40,7 +40,7 @@
                     <activation-config-property-value>Durable</activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
-                    <activation-config-property-name>destination</activation-config-property-name>
+                    <activation-config-property-name>destinationLookup</activation-config-property-name>
                     <activation-config-property-value>jms/topic/EventBus</activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
@@ -72,7 +72,7 @@
                     <activation-config-property-value>Durable</activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
-                    <activation-config-property-name>destination</activation-config-property-name>
+                    <activation-config-property-name>destinationLookup</activation-config-property-name>
                     <activation-config-property-value>jms/topic/EventBus</activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
