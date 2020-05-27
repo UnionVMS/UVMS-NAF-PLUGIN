@@ -18,7 +18,7 @@ import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeType;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.AcknowledgeTypeType;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.CommandType;
 import eu.europa.ec.fisheries.schema.exchange.common.v1.CommandTypeType;
@@ -32,6 +32,7 @@ import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.EmailType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PollType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetReportRequest;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
+import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangePluginResponseMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
 import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafConfigKeys;
 import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
@@ -68,31 +69,33 @@ public class PluginService {
      * @param reportRequest
      * @return
      */
-    public AcknowledgeTypeType setReport(SetReportRequest reportRequest) {
+    public AcknowledgeType setReport(SetReportRequest reportRequest) {
+        AcknowledgeTypeType ackType = AcknowledgeTypeType.OK;
         ReportType report = reportRequest.getReport();
         LOG.debug(startupBean.getRegisterClassName() + ".report(" + report.getType().name() + ")");
         LOG.debug("timestamp: " + report.getTimestamp());
         MovementType movement = report.getMovement();
+        String nafMessage = null;
         if (movement != null && ReportTypeType.MOVEMENT.equals(report.getType())) {
             MovementPoint pos = movement.getPosition();
             if (pos != null) {
                 String from = startupBean.getSetting(NafConfigKeys.FROM_PARTY);
-                String nafMessage = NafMessageRequestMapper.mapToVMSMessage(report, from);
+                nafMessage = NafMessageRequestMapper.mapToVMSMessage(report, from);
                 LOG.info("Sending {}", nafMessage);
                 try {
                     int response = sender.sendMessage(nafMessage, report.getRecipientInfo());
                     if (response != 200) {
                         LOG.error("Received error code {} when sending to {}", response, report.getRecipient());
-                        return AcknowledgeTypeType.NOK;
+                        ackType = AcknowledgeTypeType.NOK;
                     }
                 } catch (PluginException e) {
                     LOG.error("Could not send message due to: {}", e.getMessage());
-                    return AcknowledgeTypeType.NOK;
+                    ackType = AcknowledgeTypeType.NOK;
                 }
             }
             nafOutgoing.inc();
         }
-        return AcknowledgeTypeType.OK;
+        return ExchangePluginResponseMapper.mapToAcknowledgeType(reportRequest.getReport().getLogId(), reportRequest.getReport().getUnsentMessageGuid(), ackType, nafMessage);
     }
 
     public void setMessageReceived(String message) throws PluginException {
