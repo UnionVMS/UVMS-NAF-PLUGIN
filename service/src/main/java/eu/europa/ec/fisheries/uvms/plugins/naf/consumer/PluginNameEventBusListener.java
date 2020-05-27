@@ -63,9 +63,8 @@ public class PluginNameEventBusListener implements MessageListener {
                     break;
                 case SET_REPORT:
                     SetReportRequest setReportRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, SetReportRequest.class);
-                    AcknowledgeTypeType setReport = service.setReport(setReportRequest);
-                    AcknowledgeType setReportAck = ExchangePluginResponseMapper.mapToAcknowledgeType(setReportRequest.getReport().getLogId(), setReportRequest.getReport().getUnsentMessageGuid(), setReport);
-                    responseMessage = ExchangePluginResponseMapper.mapToSetReportResponse(startup.getRegisterClassName(), setReportAck);
+                    AcknowledgeType setReport = service.setReport(setReportRequest);
+                    responseMessage = ExchangePluginResponseMapper.mapToSetReportResponse(startup.getRegisterClassName(), setReport);
                     break;
                 case START:
                     JAXBMarshaller.unmarshallTextMessage(textMessage, StartRequest.class);
