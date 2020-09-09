@@ -15,6 +15,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.annotation.Metric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,7 @@ import eu.europa.ec.fisheries.schema.exchange.plugin.v1.SetReportRequest;
 import eu.europa.ec.fisheries.schema.exchange.service.v1.SettingListType;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangePluginResponseMapper;
 import eu.europa.ec.fisheries.uvms.plugins.naf.StartupBean;
+import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafCode;
 import eu.europa.ec.fisheries.uvms.plugins.naf.constants.NafConfigKeys;
 import eu.europa.ec.fisheries.uvms.plugins.naf.exception.PluginException;
 import eu.europa.ec.fisheries.uvms.plugins.naf.mapper.NafMessageRequestMapper;
@@ -64,6 +67,9 @@ public class PluginService {
     @Metric(name = "naf_outgoing", absolute = true)
     Counter nafOutgoing;
 
+    @Inject
+    MetricRegistry registry;
+
     /**
      *
      * @param reportRequest
@@ -87,12 +93,15 @@ public class PluginService {
                     if (response != 200) {
                         LOG.error("Received error code {} when sending to {}", response, report.getRecipient());
                         ackType = AcknowledgeTypeType.NOK;
+                        registry.counter("naf_outgoing_to_error", new Tag("to", report.getRecipient())).inc();
                     }
                 } catch (PluginException e) {
                     LOG.error("Could not send message due to: {}", e.getMessage());
                     ackType = AcknowledgeTypeType.NOK;
+                    registry.counter("naf_outgoing_to_error", new Tag("to", report.getRecipient())).inc();
                 }
             }
+            registry.counter("naf_outgoing_to", new Tag("to", report.getRecipient())).inc();
             nafOutgoing.inc();
         }
         return ExchangePluginResponseMapper.mapToAcknowledgeType(reportRequest.getReport().getLogId(), reportRequest.getReport().getUnsentMessageGuid(), ackType, nafMessage);
@@ -103,6 +112,9 @@ public class PluginService {
             SetReportMovementType movement = NafMessageResponseMapper.mapToMovementType(message, startupBean.getRegisterClassName());
             movement.setOriginalIncomingMessage(message);
             exchangeService.sendMovementReportToExchange(movement, "NAF");
+            if (NafCode.FROM.matches(message)) {
+                registry.counter("naf_incoming_from", new Tag("from", NafCode.FROM.getValue(message))).inc();
+            }
             nafIncoming.inc();
         }
     }
