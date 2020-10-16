@@ -59,6 +59,9 @@ public class NafMessageResponseMapper {
 				}
 			}
 
+			if (movement.getFlagState() == null && NafCode.FROM.matches(decodedNafMessage)) {
+			    movement.setFlagState(NafCode.FROM.getValue(decodedNafMessage));
+			}
 			mapDateTime(movement);
 			movementType.setMovement(movement);
 			movementType.setPluginType(PluginType.NAF);

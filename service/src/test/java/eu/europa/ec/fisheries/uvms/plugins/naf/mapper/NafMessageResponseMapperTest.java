@@ -293,4 +293,12 @@ public class NafMessageResponseMapperTest {
     					+ "SP/50//CO/190//DA/20170817//TI/0500//";
     	NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
     }
+
+    public void messageWithoutFlagstateTest() throws PluginException {
+        String message = "//SR//FR/SWE//AD/UVM//TM/POS//IR/SWE0000F1007//LT/57.037//LG/12.214//"
+                        + "SP/50//CO/190//DA/20170817//TI/0500//";
+        SetReportMovementType movement = NafMessageResponseMapper.mapToMovementType(message, "JUNIT");
+
+        assertEquals("SWE", movement.getMovement().getFlagState());
+    }
 }
