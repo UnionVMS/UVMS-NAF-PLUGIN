@@ -66,6 +66,7 @@ public class NafMessageRequestMapperTest {
         imo.setValue("123456");
         assetId.getAssetIdList().add(ircs);
         assetId.getAssetIdList().add(imo);
+        movement.setIrcs("IRCS");
         movement.setAssetId(assetId);
         movement.setAssetName("Sven");
         movement.setFlagState("SWE");
@@ -378,5 +379,26 @@ public class NafMessageRequestMapperTest {
         String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
         
         assertThat(NafCode.LONGITUDE_DECIMAL.getValue(naf), CoreMatchers.is("-012.346"));
+    }
+
+    @Test
+    public void appendIrcsWithDashTest() {
+        MovementType movement = new MovementType();
+        movement.setPositionTime(new Date());
+
+        MovementPoint point = new MovementPoint();
+        point.setLatitude(1.0);
+        point.setLongitude(-12.34567);
+        movement.setPosition(point);
+
+        movement.setIrcs("ABC-1234");
+
+        movement.setMovementType(MovementTypeType.POS);
+        ReportType report = new ReportType();
+        report.setRecipient("SWE");
+        report.setMovement(movement);
+        String naf = NafMessageRequestMapper.mapToVMSMessage(report, "UNK");
+
+        assertThat(NafCode.RADIO_CALL_SIGN.getValue(naf), CoreMatchers.is("ABC1234"));
     }
 }

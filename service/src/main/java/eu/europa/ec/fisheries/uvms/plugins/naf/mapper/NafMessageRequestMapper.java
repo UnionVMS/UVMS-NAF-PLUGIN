@@ -57,8 +57,8 @@ public class NafMessageRequestMapper {
         append(naf, NafCode.TO.getCode(), report.getRecipient());
         append(naf, NafCode.FROM.getCode(), from);
         append(naf, NafCode.TYPE_OF_MESSAGE.getCode(), movement.getMovementType().name());
-        if (!appendAsset(naf, NafCode.RADIO_CALL_SIGN.getCode(), AssetIdType.IRCS, movement)) {
-            append(naf, NafCode.RADIO_CALL_SIGN.getCode(), movement.getIrcs());
+        if (movement.getIrcs() != null) {
+            append(naf, NafCode.RADIO_CALL_SIGN.getCode(), movement.getIrcs().replace("-", ""));
         }
         if (movement.getTripNumber() != null) {
             append(naf, NafCode.TRIP_NUMBER.getCode(), movement.getTripNumber());
