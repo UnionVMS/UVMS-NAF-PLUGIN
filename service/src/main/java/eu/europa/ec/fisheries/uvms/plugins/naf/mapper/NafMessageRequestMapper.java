@@ -104,13 +104,8 @@ public class NafMessageRequestMapper {
 
     private static void appendPosition(StringBuilder naf, MovementType movement) {
         MovementPoint position = movement.getPosition();
-        if (MovementSourceType.MANUAL.equals(movement.getSource())) {
-            append(naf, NafCode.LATITUDE.getCode(), getLatitudeString(position.getLatitude()));
-            append(naf, NafCode.LONGITUDE.getCode(), getLongitudeString(position.getLongitude()));
-        } else {
-            append(naf, NafCode.LATITUDE_DECIMAL.getCode(), latFormatter.format(position.getLatitude()));
-            append(naf, NafCode.LONGITUDE_DECIMAL.getCode(), longFormatter.format(position.getLongitude()));
-        }
+        append(naf, NafCode.LATITUDE_DECIMAL.getCode(), latFormatter.format(position.getLatitude()));
+        append(naf, NafCode.LONGITUDE_DECIMAL.getCode(), longFormatter.format(position.getLongitude()));
     }
 
     static boolean appendAsset(StringBuilder naf, String nafCode, AssetIdType assetId, MovementType movement) {
@@ -195,8 +190,10 @@ public class NafMessageRequestMapper {
         if (deg < 10) {
             sb.append(0);
         }
-
         sb.append(deg);
+        if (min < 10) {
+            sb.append(0);
+        }
         sb.append(min);
         return sb.toString();
     }
@@ -222,6 +219,9 @@ public class NafMessageRequestMapper {
             sb.append(0);
         }
         sb.append(deg);
+        if (min < 10) {
+            sb.append(0);
+        }
         sb.append(min);
         return sb.toString();
     }
